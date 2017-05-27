@@ -1,0 +1,379 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "X Axis Data",
+            "name": "datetime",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Y1 Axis Data",
+            "name": "y1Value",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "Y2 Axis Data",
+            "name": "y2Value",
+            "kind": "Measure"
+        }
+    ],
+    "dataViewMappings": [
+        {            
+            "categorical": {
+                "categories": {
+                    "for": {
+                        "in": "datetime"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {}
+                    }
+                },
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "y1Value"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "y2Value"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "objects": {
+        "chart": {
+            "displayName": "Chart",
+            "properties": {
+                "dataColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Data Point Color"
+                },
+                "lineColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Line Color"
+                },
+                "lineStyle": {
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Solid",
+                                "value": ""
+                            },
+                            {
+                                "displayName": "Dash",
+                                "value": "10,4"
+                            },
+                            {
+                                "displayName": "Dot",
+                                "value": "2,2"
+                            },
+                            {
+                                "displayName": "Dash-Dot",
+                                "value": "10,2,4"
+                            },
+                            {
+                                "displayName": "Small Dash",
+                                "value": "6,4"
+                            }
+                        ]
+                    },
+                    "displayName": "Line Style",
+                    "description": "Select line style"
+                },
+                "showGridLines": {
+                    "type": {
+                        "bool": true
+                    },
+                    "displayName": "Show Grid Lines",
+                    "description": "Make grid lines visible"
+                }
+            }
+        },
+        "xAxis": {
+            "displayName": "X Axis",
+            "properties": {
+                "xAxisTitle": {
+                    "type": {
+                        "text": true
+                    },
+                    "displayName": "Title"
+                },
+                "xAxisTitleColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Title Color"
+                },
+                "xAxisTitleSize": {
+                    "type": {
+                        "numeric": true
+                    },
+                    "displayName": "Title Size"
+                },
+                "xAxisLabelColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Axis Label Color"
+                },
+                "xAxisLabelSize": {
+                    "type": {
+                        "numeric": true
+                    },
+                    "displayName": "Axis Label Size"
+                },
+                "xAxisFormat": {
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "dd-mm",
+                                "value": "%d-%b"
+                            },
+                            {
+                                "displayName": "dd-mm-yy",
+                                "value": "%d-%b-%y"
+                            },
+                            {
+                                "displayName": "dd-mm-yy hh:mm",
+                                "value": "%d-%b-%y"
+                            },
+                            {
+                                "displayName": "mm-yy",
+                                "value": "%b-%y"
+                            },
+                            {
+                                "displayName": "mm-dd-yy",
+                                "value": "%b-%d-%y"
+                            },
+                            {
+                                "displayName": "mm-dd-yy hh:mm",
+                                "value": "%b-%d-%y"
+                            },
+                            {
+                                "displayName": "000",
+                                "value": ".3s"
+                            },
+                            {
+                                "displayName": "0000",
+                                "value": ".4s"
+                            },
+                            {
+                                "displayName": "00000",
+                                "value": ".5s"
+                            },
+                            {
+                                "displayName": "000000",
+                                "value": ".6s"
+                            }
+                        ]
+                    },
+                    "displayName": "Axis Label Format",
+                    "description": "Select format for X Axis Labels"
+                }
+            }
+        },
+        "yAxis": {
+            "displayName": "Y Axis",
+            "properties": {
+                "yAxisTitle": {
+                    "type": {
+                        "text": true
+                    },
+                    "displayName": "Title"
+                },
+                "yAxisTitleColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Title Color"
+                },
+                "yAxisTitleSize": {
+                    "type": {
+                        "numeric": true
+                    },
+                    "displayName": "Title Size"
+                },
+                "yAxisLabelColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Axis Label Color"
+                },
+                "yAxisLabelSize": {
+                    "type": {
+                        "numeric": true
+                    },
+                    "displayName": "Axis Label Size"
+                },
+                "yAxisFormat": {
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "0",
+                                "value": ".1s"
+                            },
+                            {
+                                "displayName": "00",
+                                "value": ".2s"
+                            },
+                            {
+                                "displayName": "000",
+                                "value": ".3s"
+                            },
+                            {
+                                "displayName": "0000",
+                                "value": ".4s"
+                            },
+                            {
+                                "displayName": "00000",
+                                "value": ".5s"
+                            },
+                            {
+                                "displayName": "000000",
+                                "value": ".6s"
+                            }
+                        ]
+                    },
+                    "displayName": "Axis Label Format",
+                    "description": "Select format for Y Axis Labels"
+                }
+            }
+        },
+        "y2Axis": {
+            "displayName": "Y2 Axis",
+            "properties": {
+                "y2AxisTitle": {
+                    "type": {
+                        "text": true
+                    },
+                    "displayName": "Title"
+                },
+                "y2AxisTitleColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Title Color"
+                },
+                "y2AxisTitleSize": {
+                    "type": {
+                        "numeric": true
+                    },
+                    "displayName": "Title Size"
+                },
+                "y2AxisLabelColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Axis Label Color"
+                },
+                "y2AxisLabelSize": {
+                    "type": {
+                        "numeric": true
+                    },
+                    "displayName": "Axis Label Size"
+                },
+                "y2AxisFormat": {
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "0",
+                                "value": ".1s"
+                            },
+                            {
+                                "displayName": "00",
+                                "value": ".2s"
+                            },
+                            {
+                                "displayName": "000",
+                                "value": ".3s"
+                            },
+                            {
+                                "displayName": "0000",
+                                "value": ".4s"
+                            },
+                            {
+                                "displayName": "00000",
+                                "value": ".5s"
+                            },
+                            {
+                                "displayName": "000000",
+                                "value": ".6s"
+                            }
+                        ]
+                    },
+                    "displayName": "Axis Label Format",
+                    "description": "Select format for Y2 Axis Labels"
+                }
+            }
+        },
+        "crossHairs": {
+            "displayName": "Crosshairs",
+            "properties": {
+                "showCrossHairs": {
+                    "type": {
+                        "bool": true
+                    },
+                    "displayName": "Show Crosshairs"
+                },
+                "crossHairLineColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Cross Hair Line Color",
+                    "description": "Select color for crosshairs"
+                },
+                "crossHairLabelSize": {
+                    "type": {
+                        "numeric": true
+                    },
+                    "displayName": "Label Size",
+                    "description": "Select size of label"
+                }
+            }
+        }
+    }
+}
