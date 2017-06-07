@@ -17,7 +17,7 @@
         }
     ],
     "dataViewMappings": [
-        {            
+        {
             "categorical": {
                 "categories": {
                     "for": {
@@ -159,7 +159,7 @@
                             },
                             {
                                 "displayName": "dd-mm-yy hh:mm",
-                                "value": "%d-%b-%y"
+                                "value": "%d-%b-%y %H:%M"
                             },
                             {
                                 "displayName": "mm-yy",
@@ -171,7 +171,7 @@
                             },
                             {
                                 "displayName": "mm-dd-yy hh:mm",
-                                "value": "%b-%d-%y"
+                                "value": "%b-%d-%y %H:%M"
                             },
                             {
                                 "displayName": "000",
@@ -188,6 +188,39 @@
                             {
                                 "displayName": "000000",
                                 "value": ".6s"
+                            }
+                        ]
+                    },
+                    "displayName": "Axis Label Format",
+                    "description": "Select format for X Axis Labels"
+                },
+                
+                "xAxisDateFormat": {
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "dd-mm",
+                                "value": "%d-%b"
+                            },
+                            {
+                                "displayName": "dd-mm-yy",
+                                "value": "%d-%b-%y"
+                            },
+                            {
+                                "displayName": "dd-mm-yy hh:mm",
+                                "value": "%d-%b-%y %H:%M"
+                            },
+                            {
+                                "displayName": "mm-yy",
+                                "value": "%b-%y"
+                            },
+                            {
+                                "displayName": "mm-dd-yy",
+                                "value": "%b-%d-%y"
+                            },
+                            {
+                                "displayName": "mm-dd-yy hh:mm",
+                                "value": "%b-%d-%y %H:%M"
                             }
                         ]
                     },
@@ -345,33 +378,34 @@
                     "description": "Select format for Y2 Axis Labels"
                 }
             }
-        },
-        "crossHairs": {
-            "displayName": "Crosshairs",
+        },        
+        "y1ColorSelector": {
+            "displayName": "Y1 Data Colors",
             "properties": {
-                "showCrossHairs": {
-                    "type": {
-                        "bool": true
-                    },
-                    "displayName": "Show Crosshairs"
-                },
-                "crossHairLineColor": {
+                "fill": {
+                    "displayName": "Color",
                     "type": {
                         "fill": {
                             "solid": {
                                 "color": true
                             }
                         }
-                    },
-                    "displayName": "Cross Hair Line Color",
-                    "description": "Select color for crosshairs"
-                },
-                "crossHairLabelSize": {
+                    }
+                }
+            }
+        },
+        "y2ColorSelector": {
+            "displayName": "Y2 Data Colors",
+            "properties": {
+                "fill": {
+                    "displayName": "Color",
                     "type": {
-                        "numeric": true
-                    },
-                    "displayName": "Label Size",
-                    "description": "Select size of label"
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
                 }
             }
         }
