@@ -261,8 +261,6 @@ module powerbi.extensibility.visual {
         private xScale;
         private y1Scale;
         private y2Scale;
-        private dots;
-        // private selectionIdBuilder: ISelectionIdBuilder;
         private selectionManager: ISelectionManager;
         private colorPalettes: colorPalette[];
         private tooltipServiceWrapper: ITooltipServiceWrapper;
@@ -289,10 +287,6 @@ module powerbi.extensibility.visual {
 
             // get categorical data from visual data view
             this.dataView = options.dataViews[0];
-
-
-            //alert(this.colorPalettes.length.toString());
-            //alert(this.colorPalettes[0].name);
 
             // convert categorical data into specialized data structure for data binding
             this.DualYAxisChartViewModel = visualTransform(options, this.host, this.colorPalettes);

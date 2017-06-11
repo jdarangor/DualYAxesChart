@@ -90,20 +90,14 @@ module powerbi.extensibility.visual {
     }
 
     export function getSelectorFill(category: DataViewCategoryColumn, index: number, objectName: string, propertyName: string, defaultValue: string): string {
-        let categoryObjects = category.objects;
-
-        alert(category.values);
-        if (categoryObjects) {
-            alert('h2');
+        let categoryObjects = category.objects;        
+        if (categoryObjects) {            
             let categoryObject: DataViewObject = categoryObjects[index];
-            if (categoryObject) {
-                alert('h3');
+            if (categoryObject) {            
                 let object = categoryObject[objectName];
-                if (object) {
-                    alert('h4');
+                if (object) {                    
                     let property = object[propertyName];
-                    if (property !== undefined) {
-                        alert('h5');
+                    if (property !== undefined) {                        
                         return <string>(<Fill>property).solid.color;
                     }
                 }
@@ -112,16 +106,10 @@ module powerbi.extensibility.visual {
         return defaultValue;
     }
     export function getValue2(objects: DataViewObjects, objectName: string, propertyName: string, defaultValue: string):string {
-        if (objects) {
-          
+        if (objects) {        
             let object = objects[objectName];
-          // alert(objects[objectName].toString());
             if (object) {
-//alert(object.toString());
-
                 let property = object[propertyName];
-//alert('prop ' +  <string>(<Fill>property).solid.color);
-
                 if (property !== undefined) {
                     return <string>(<Fill>property).solid.color;
                 }
