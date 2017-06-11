@@ -2,26 +2,44 @@
     "dataRoles": [
         {
             "displayName": "X Axis Data",
-            "name": "datetime",
+            "name": "xAxis",
             "kind": "Grouping"
         },
         {
             "displayName": "Y1 Axis Data",
             "name": "y1Value",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "Y2 Axis Data",
             "name": "y2Value",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         }
     ],
     "dataViewMappings": [
         {
+            "conditions": [
+                {
+                    "xAxis": {
+                        "min": 1,
+                        "max": 1
+                    }
+                }
+            ],
             "categorical": {
                 "categories": {
                     "for": {
-                        "in": "datetime"
+                        "in": "xAxis"
                     },
                     "dataReductionAlgorithm": {
                         "top": {}
@@ -48,16 +66,6 @@
         "chart": {
             "displayName": "Chart",
             "properties": {
-                "dataColor": {
-                    "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
-                    },
-                    "displayName": "Data Point Color"
-                },
                 "lineColor": {
                     "type": {
                         "fill": {
@@ -102,6 +110,38 @@
                     },
                     "displayName": "Show Grid Lines",
                     "description": "Make grid lines visible"
+                },
+                "legendPosition": {
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "None",
+                                "value": "none"
+                            },
+                            {
+                                "displayName": "Left",
+                                "value": "left"
+                            },
+                            {
+                                "displayName": "Right",
+                                "value": "right"
+                            },
+                            {
+                                "displayName": "Top",
+                                "value": "top"
+                            },
+                            {
+                                "displayName": "Bottom",
+                                "value": "bottom"
+                            },
+                            {
+                                "displayName": "Split Axes",
+                                "value": "split"
+                            }
+                        ]
+                    },
+                    "displayName": "Show Legend",
+                    "description": "Select legend position"
                 }
             }
         },
@@ -150,28 +190,12 @@
                     "type": {
                         "enumeration": [
                             {
-                                "displayName": "dd-mm",
-                                "value": "%d-%b"
+                                "displayName": "0",
+                                "value": ".1s"
                             },
                             {
-                                "displayName": "dd-mm-yy",
-                                "value": "%d-%b-%y"
-                            },
-                            {
-                                "displayName": "dd-mm-yy hh:mm",
-                                "value": "%d-%b-%y %H:%M"
-                            },
-                            {
-                                "displayName": "mm-yy",
-                                "value": "%b-%y"
-                            },
-                            {
-                                "displayName": "mm-dd-yy",
-                                "value": "%b-%d-%y"
-                            },
-                            {
-                                "displayName": "mm-dd-yy hh:mm",
-                                "value": "%b-%d-%y %H:%M"
+                                "displayName": "00",
+                                "value": ".2s"
                             },
                             {
                                 "displayName": "000",
@@ -194,7 +218,6 @@
                     "displayName": "Axis Label Format",
                     "description": "Select format for X Axis Labels"
                 },
-                
                 "xAxisDateFormat": {
                     "type": {
                         "enumeration": [
@@ -378,34 +401,28 @@
                     "description": "Select format for Y2 Axis Labels"
                 }
             }
-        },        
-        "y1ColorSelector": {
-            "displayName": "Y1 Data Colors",
+        },
+        "yColorSelector": {
+            "displayName": "Color Palette",
             "properties": {
-                "fill": {
-                    "displayName": "Color",
+                "lineColor": {
                     "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
-                    }
+                        "integer": true
+                    },
+                    "displayName": "Palette"
                 }
             }
         },
-        "y2ColorSelector": {
-            "displayName": "Y2 Data Colors",
+        "test": {
+            "displayName": "test",
             "properties": {
-                "fill": {
-                    "displayName": "Color",
+                "testData": {
                     "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
-                    }
+                        "enumeration": [
+                            
+                        ]
+                    },
+                    "displayName": "test"
                 }
             }
         }
