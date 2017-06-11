@@ -296,7 +296,7 @@ module powerbi.extensibility.visual {
 
             this.viewPort = options.viewport;
 
-            if (this.DualYAxisChartViewModel && (this.DualYAxisChartViewModel.dataPoints[0] || this.DualYAxisChartViewModel.dataPoints[0])) {
+            if (this.DualYAxisChartViewModel && this.DualYAxisChartViewModel.dataPoints[0]) {
                 this.CreateAxes(options.viewport.width, options.viewport.height);
                 this.PlotData2(this.DualYAxisChartViewModel.dataPoints);
                 this.CreateBorder();
