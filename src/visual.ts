@@ -25,21 +25,8 @@
  */
 
 module powerbi.extensibility.visual {
-    /*import DataViewObjects = powerbi.DataViewObjects;
-    import IVisual = powerbi.extensibility.visual.IVisual;
-    import IColorPalette = powerbi.extensibility.IColorPalette;
-    import DataViewValueColumns = powerbi.DataViewValueColumns;
-    import DataViewValueColumnGroup = powerbi.DataViewValueColumnGroup;
-    import ColorHelper = powerbi.extensibility.utils.color.ColorHelper;
-    import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
-    import DataViewObjectPropertyIdentifier = powerbi.DataViewObjectPropertyIdentifier;
-    import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
-    
-    */
 
     interface DualYAxisChartViewModel {
-        // y1DataPoints: series[];
-        //  y2DataPoints: series[];
         dataPoints: series[];
         minX: any;
         maxX: any;
@@ -53,10 +40,13 @@ module powerbi.extensibility.visual {
         y2Axis: AxisData;
         showGridLines: boolean;
         isDateRange: boolean;
+        legendPos: string;
+        legendRowHeight: number;
+        colorPalette: number;
     };
 
     interface LineData {
-        DataColor: string;
+        DataColor?: string;
         LineColor: string;
         LineStyle: string;
     }
@@ -83,13 +73,17 @@ module powerbi.extensibility.visual {
         yValue: number;
     };
 
-
     interface series {
         AxisData: ChartDataPoint[];
         color: string;
         selectionId: ISelectionId;
         seriesName: string;
         axis: string;
+    }
+
+    interface colorPalette {
+        name: string;
+        colors: string[];
     }
 
     /**
@@ -101,11 +95,9 @@ module powerbi.extensibility.visual {
              *                                        the visual had queried.
              * @param {IVisualHost} host            - Contains references to the host which contains services
              */
-    function visualTransform(options: VisualUpdateOptions, host: IVisualHost): DualYAxisChartViewModel {
+    function visualTransform(options: VisualUpdateOptions, host: IVisualHost, cp: colorPalette[]): DualYAxisChartViewModel {
         let dataViews = options.dataViews;
         let viewModel: DualYAxisChartViewModel = {
-            //    y1DataPoints: [],
-            //    y2DataPoints: [],
             dataPoints: [],
             minX: null,
             maxX: null,
@@ -118,7 +110,10 @@ module powerbi.extensibility.visual {
             yAxis: null,
             y2Axis: null,
             showGridLines: true,
-            isDateRange: true
+            isDateRange: true,
+            legendPos: '',
+            legendRowHeight: 14,
+            colorPalette: 0
         };
 
         if (!dataViews
@@ -153,7 +148,6 @@ module powerbi.extensibility.visual {
                 xAxisFormat = getValue<string>(dataViews[0].metadata.objects, 'xAxis', 'xAxisFormat', '.3s')
 
             let chartData: LineData = {
-                DataColor: getFill(dataViews[0], 'chart', 'dataColor', '#FF0000'),
                 LineColor: getFill(dataViews[0], 'chart', 'lineColor', '#0000FF'),
                 LineStyle: getValue<string>(dataViews[0].metadata.objects, 'chart', 'lineStyle', '')
             };
@@ -181,8 +175,10 @@ module powerbi.extensibility.visual {
                 AxisLabelColor: getFill(dataViews[0], 'y2Axis', 'y2AxisLabelColor', '#2F4F4F'),
                 AxisFormat: getValue<string>(dataViews[0].metadata.objects, 'y2Axis', 'y2AxisFormat', '.3s')
             };
+            let legendPos: string = getValue<string>(dataViews[0].metadata.objects, 'chart', 'legendPosition', 'none');
+            var paletteId = getValue<number>(dataViews[0].metadata.objects, 'yColorSelector', 'lineColor', 0);
+            var c = cp[paletteId].colors;
 
-            var c: string[] = ["red", "green", "blue", "orange", "limegreen", "lightblue"];
             for (let k = 0; k < categorical.values.length; k++) {  //1,2..
                 seriesDataPoints = [];
                 for (let i = 0; i < categorical.values[k].values.length; i++) {
@@ -190,17 +186,16 @@ module powerbi.extensibility.visual {
                 }
 
                 var selectionId = host.createSelectionIdBuilder()
-                    .withMeasure(categorical.values[k].source.displayName)
+                    .withCategory(category, k)
                     .createSelectionId();
 
                 if (categorical.values[k].source.roles['y2Value'] == true) {
                     viewModel.dataPoints.push({
                         AxisData: seriesDataPoints,
-                        color: c[k % c.length],
+                        color: c[k % c.length],// getSelectorFill(category, k, 'yColorSelector', 'fill', 'purple'),
                         seriesName: categorical.values[k].source.displayName,
                         selectionId: selectionId,
                         axis: 'y2'
-
                     });
                     if (isNaN(minY2))
                         minY2 = <number>categorical.values[k].minLocal;
@@ -213,7 +208,7 @@ module powerbi.extensibility.visual {
                     if (categorical.values[k].source.roles['y1Value'] = true) {
                         viewModel.dataPoints.push({
                             AxisData: seriesDataPoints,
-                            color: c[k % c.length],
+                            color: c[k % c.length],//getSelectorFill(category, k, 'yColorSelector', 'fill', 'purple'),
                             seriesName: categorical.values[k].source.displayName,
                             selectionId: selectionId,
                             axis: 'y1'
@@ -226,9 +221,9 @@ module powerbi.extensibility.visual {
                         minY1 = Math.min(<number>categorical.values[k].minLocal, minY1);
                     }
             }
+
+            //alert('here');
             return {
-                //  y1DataPoints: viewModel.y1DataPoints,
-                //  y2DataPoints: viewModel.y2DataPoints,
                 dataPoints: viewModel.dataPoints,
                 minX: null,
                 maxX: null,
@@ -241,7 +236,10 @@ module powerbi.extensibility.visual {
                 yAxis: yAxisData,
                 y2Axis: y2AxisData,
                 showGridLines: getValue<boolean>(dataViews[0].metadata.objects, 'chart', 'showGridLines', true),
-                isDateRange: (xAxisType == "date")
+                isDateRange: (xAxisType == "date"),
+                legendPos: legendPos,
+                legendRowHeight: 14,
+                colorPalette: paletteId
             };
         }
         else {
@@ -254,6 +252,7 @@ module powerbi.extensibility.visual {
         private host: IVisualHost;
         private Container: d3.Selection<SVGElement>;
         private dataView: DataView;
+        private viewPort;
         private DualYAxisChartViewModel: DualYAxisChartViewModel;
         private svgRoot: d3.Selection<SVGElementInstance>;
         private svgGroupMain: d3.Selection<SVGElementInstance>;
@@ -265,15 +264,17 @@ module powerbi.extensibility.visual {
         private dots;
         // private selectionIdBuilder: ISelectionIdBuilder;
         private selectionManager: ISelectionManager;
-        //private  colorPalette: IColorPalette;
+        private colorPalettes: colorPalette[];
+        private tooltipServiceWrapper: ITooltipServiceWrapper;
 
         constructor(options: VisualConstructorOptions) {
             this.host = options.host;
             this.svgRoot = d3.select(options.element).append('svg').classed('controlChart', true);
             this.svgGroupMain = this.svgRoot.append("g").classed('Container', true);
-            //   this.selectionIdBuilder = options.host.createSelectionIdBuilder();
             this.selectionManager = options.host.createSelectionManager();
-            //   this.colorPalette = options.host.colorPalette;
+            this.tooltipServiceWrapper = createTooltipServiceWrapper(this.host.tooltipService, options.element);
+            this.CreateColorPalettes();
+
         }
 
         public update(options: VisualUpdateOptions) {
@@ -288,39 +289,68 @@ module powerbi.extensibility.visual {
 
             // get categorical data from visual data view
             this.dataView = options.dataViews[0];
+
+
+            //alert(this.colorPalettes.length.toString());
+            //alert(this.colorPalettes[0].name);
+
             // convert categorical data into specialized data structure for data binding
-            this.DualYAxisChartViewModel = visualTransform(options, this.host);
+            this.DualYAxisChartViewModel = visualTransform(options, this.host, this.colorPalettes);
             this.svgRoot
                 .attr("width", options.viewport.width)
                 .attr("height", options.viewport.height);
-            /*  this.svgGroupMain.selectAll("*").remove();
-              this.svgRoot.selectAll('.axis').remove();
-              this.svgGroupMain.selectAll("g").remove();*/
+
+            this.viewPort = options.viewport;
 
             if (this.DualYAxisChartViewModel && (this.DualYAxisChartViewModel.dataPoints[0] || this.DualYAxisChartViewModel.dataPoints[0])) {
                 this.CreateAxes(options.viewport.width, options.viewport.height);
-                this.PlotData2(this.DualYAxisChartViewModel.dataPoints, this.y1Scale, 'y1');
-        //        this.PlotData2(this.DualYAxisChartViewModel.dataPoints, this.y2Scale, 'y2');
-        this.CreateBorder();
+                this.PlotData2(this.DualYAxisChartViewModel.dataPoints);
+                this.CreateBorder();
+                this.CreateLegend();
+
             }
         }
 
         private CreateAxes(viewPortWidth: number, viewPortHeight: number) {
-            var xAxisOffset = 54;
-            var yAxisOffset = 54
+            var y1AxisIndent = 84;
+            var y2AxisIndent = 84;
+            var topAxisIndent = 10;
+            var bottomAxisIndent = 64;
+            let viewModel = this.DualYAxisChartViewModel;
+            var numLines = viewModel.dataPoints.length;
+            var numLegendRows = Math.ceil(numLines / 5);
+            var rowHeight = viewModel.legendRowHeight;
+
+            switch (viewModel.legendPos) {
+                case 'top':
+                    topAxisIndent = topAxisIndent + rowHeight * numLegendRows;
+                    break;
+                case 'bottom':
+                    bottomAxisIndent = bottomAxisIndent + rowHeight * numLegendRows;
+                    break;
+                case 'left':
+                    y1AxisIndent = 150;
+                    break;
+                case 'right':
+                    y2AxisIndent = 150;
+                    break;
+                case 'split':
+                    y1AxisIndent = 150;
+                    y2AxisIndent = 150;
+                    break;
+            }
             var plot = {
-                xAxisOffset: 54,
-                yAxisOffset: 54,
-                xOffset: this.padding + xAxisOffset,
-                yOffset: this.padding,
-                width: viewPortWidth - (this.padding * 2) - (2 * xAxisOffset) - this.padding,
-                height: viewPortHeight - (this.padding * 2) - yAxisOffset,
+                y1AxisIndent: y1AxisIndent,
+                y2AxisIndent: y2AxisIndent,
+                topAxisIndent: topAxisIndent,
+                bottomAxisIndent: bottomAxisIndent,
+                width: viewPortWidth - (y1AxisIndent + y2AxisIndent),
+                height: viewPortHeight - (bottomAxisIndent + topAxisIndent),
             };
             this.plot = plot;
             this.CreateXAxis();
             this.CreateY1Axis();
             this.CreateY2Axis();
-
         }
 
         private CreateXAxis() {
@@ -328,16 +358,8 @@ module powerbi.extensibility.visual {
             this.svgGroupMain.attr({
                 height: plot.height,
                 width: plot.width,
-                transform: 'translate(' + plot.xOffset + ',' + plot.yOffset + ')'
+                transform: 'translate(' + plot.y1AxisIndent + ',' + plot.topAxisIndent + ')'
             });
-           /* var borderPath = this.svgGroupMain.append("rect")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr("height", plot.height)
-                .attr("width", plot.width)
-                .style("stroke", "grey")
-                .style("fill", "none")
-                .style("stroke-width", 1);*/
 
             let viewModel: DualYAxisChartViewModel = this.DualYAxisChartViewModel;
             let vmXaxis = viewModel.xAxis;
@@ -346,11 +368,12 @@ module powerbi.extensibility.visual {
             this.GetMinMaxX();
             var xScale;
             var dateFormat;
-            dateFormat = d3.time.format(vmXaxis.AxisFormat);
+
             if (viewModel.isDateRange) {
                 xScale = d3.time.scale()
                     .range([0, plot.width])
                     .domain([viewModel.minX, viewModel.maxX]);
+                dateFormat = d3.time.format(vmXaxis.AxisFormat);
             }
             else {
                 xScale = d3.scale.linear()
@@ -365,7 +388,7 @@ module powerbi.extensibility.visual {
             var xAxis = d3.svg.axis()
                 .scale(xScale)
                 .orient('bottom')
-                .tickPadding(14)
+                .tickPadding(8)
                 .tickFormat(dateFormat);
             /*   if (!viewModel.showGridLines) {
                    xAxis.innerTickSize(0);
@@ -378,20 +401,8 @@ module powerbi.extensibility.visual {
                 .attr('transform', 'translate(0,' + plot.height + ')')
                 .call(xAxis)
                 .style("font-size", vmXaxis.AxisLabelSize + 'px');
-            var xGridlineAxis = d3.svg.axis()
-                .scale(xScale)
-                .orient('bottom')
-                .innerTickSize(8)
-                .tickPadding(10)
-                .outerTickSize(6);
-            this.svgGroupMain
-                .append('g')
-                .attr('class', 'gridLine')
-                .attr('transform', 'translate(0,' + plot.height + ')')
-                .call(xGridlineAxis)
-                .style("font-size", '0px');
             this.svgGroupMain.append("text")
-                .attr("y", plot.height + plot.yAxisOffset)
+                .attr("y", plot.height + plot.bottomAxisIndent / 2 + this.padding)
                 .attr("x", (plot.width / 2))
                 .style("text-anchor", "middle")
                 .style("font-size", vmXaxis.TitleSize + 'px')
@@ -399,8 +410,8 @@ module powerbi.extensibility.visual {
                 .text(vmXaxis.AxisTitle);
         }
 
-private CreateBorder(){
-     var plot = this.plot;        
+        private CreateBorder() {
+            var plot = this.plot;
             var borderPath = this.svgGroupMain.append("rect")
                 .attr("x", 0)
                 .attr("y", 0)
@@ -409,7 +420,155 @@ private CreateBorder(){
                 .style("stroke", "grey")
                 .style("fill", "none")
                 .style("stroke-width", 1);
-}
+        }
+
+        private CreateLegend() {
+            var viewModel = this.DualYAxisChartViewModel;
+            var plot = this.plot;
+            var rowHeight = viewModel.legendRowHeight;
+            var leftPos = 4;
+            var topPos;
+            this.svgRoot.selectAll(".legend").remove();
+            switch (viewModel.legendPos) {
+                case 'top':
+                    leftPos = plot.y1AxisIndent;
+                    topPos = this.padding / 2;
+                    break;
+                case 'bottom':
+                    leftPos = plot.y1AxisIndent;
+                    var numLines = viewModel.dataPoints.length;
+                    var numLegendRows = Math.ceil(numLines / 5);
+                    topPos = this.viewPort.height - viewModel.legendRowHeight * numLegendRows; 
+                    break;
+                case 'left':
+                    leftPos = 4;
+                    topPos = plot.topAxisIndent;
+                    break;
+                case 'right':
+                    leftPos = plot.width + plot.y1AxisIndent + plot.y2AxisIndent / 2 - this.padding;
+                    topPos = plot.topAxisIndent;
+                    break;
+                case 'split':
+                    topPos = plot.topAxisIndent;
+                    break;
+                case 'none':
+                    break;
+            }
+
+            if (viewModel.legendPos == 'left' || viewModel.legendPos == 'right') {
+                for (let i = 0; i < viewModel.dataPoints.length; i++) {
+                    this.svgRoot.append("g")
+                        .attr("class", "legend")
+                        .append("rect")
+                        .attr("x", leftPos)
+                        .attr("y", topPos + i * rowHeight)
+                        .attr("width", 10)
+                        .attr("height", 10)
+                        .style("fill", viewModel.dataPoints[i].color);
+                    this.svgRoot.append("g")
+                        .attr("class", "legend")
+                        .append("text")
+                        .attr("x", leftPos + 12)
+                        .attr("y", topPos + 9 + i * rowHeight)
+                        .text(viewModel.dataPoints[i].seriesName)
+                        .style("fill", viewModel.dataPoints[i].color)
+                        .on("click", function () {
+                            // Determine if current line is visible 
+                            var el = d3.select("#tag" + i.toString());
+                            var op = el.style("opacity");
+                            var newOpacity = op == '1' ? 0 : 1;
+                            // Hide or show the elements based on the ID
+                            d3.select("#tag" + i.toString())
+                                .transition().duration(100)
+                                .style("opacity", newOpacity);
+                        });
+                }
+            }
+            else {
+                if (viewModel.legendPos == 'top' || viewModel.legendPos == 'bottom') {
+                    var legendItemWidth = plot.width / 5;
+                    var rowId = 0;
+                    for (let i = 0; i < viewModel.dataPoints.length; i++) {
+                        if (i > 0 && i % 5 == 0)
+                            rowId++;
+                        this.svgRoot.append("g")
+                            .attr("class", "legend")
+                            .append("rect")
+                            .attr("x", leftPos + legendItemWidth * (i % 5))
+                            .attr("y", topPos + rowId * rowHeight)
+                            .attr("width", 10)
+                            .attr("height", 10)
+                            .style("fill", viewModel.dataPoints[i].color);
+                        this.svgRoot.append("g")
+                            .attr("class", "legend")
+                            .append("text")
+                            .attr("x", leftPos + legendItemWidth * (i % 5) + 12)
+                            .attr("y", topPos + 9 + rowId * rowHeight)
+                            .text(viewModel.dataPoints[i].seriesName)
+                            .style("fill", viewModel.dataPoints[i].color)
+                            .on("click", function () {
+                                // Determine if current line is visible 
+                                var el = d3.select("#tag" + i.toString());
+                                var op = el.style("opacity");
+                                var newOpacity = op == '1' ? 0 : 1;
+                                // Hide or show the elements based on the ID
+                                d3.select("#tag" + i.toString())
+                                    .transition().duration(100)
+                                    .style("opacity", newOpacity);
+                            })
+                    }
+                }
+                else {
+                    if (viewModel.legendPos == 'split') {
+                        var rowY1Id = 0;
+                        var rowY2Id = 0;
+                        var leftStart = 0;
+                        var rowId = 0;
+                        for (let i = 0; i < viewModel.dataPoints.length; i++) {
+                            if (viewModel.dataPoints[i].axis == 'y1') {
+                                leftStart = leftPos;
+                                rowId = rowY1Id;
+                            }
+                            else {
+                                leftStart = plot.width + plot.y1AxisIndent + plot.y2AxisIndent / 2 - this.padding;
+                                rowId = rowY2Id;
+                            }
+
+                            this.svgRoot.append("g")
+                                .attr("class", "legend")
+                                .append("rect")
+                                .attr("x", leftStart)
+                                .attr("y", topPos + rowId * rowHeight)
+                                .attr("width", 10)
+                                .attr("height", 10)
+                                .style("fill", viewModel.dataPoints[i].color);
+                            this.svgRoot.append("g")
+                                .attr("class", "legend")
+                                .append("text")
+                                .attr("x", leftStart + 12)
+                                .attr("y", topPos + 9 + rowId * rowHeight)
+                                .text(viewModel.dataPoints[i].seriesName)
+                                .style("fill", viewModel.dataPoints[i].color)
+                                .on("click", function () {
+                                    // Determine if current line is visible 
+                                    var el = d3.select("#tag" + i.toString());
+                                    var op = el.style("opacity");
+                                    var newOpacity = op == '1' ? 0 : 1;
+                                    // Hide or show the elements based on the ID
+                                    d3.select("#tag" + i.toString())
+                                        .transition().duration(100)
+                                        .style("opacity", newOpacity);
+                                });
+
+                            if (viewModel.dataPoints[i].axis == 'y1')
+                                rowY1Id = rowY1Id + 1;
+                            else
+                                rowY2Id = rowY2Id + 1;
+                        }
+                    }
+                }
+            }
+        }
 
         private CreateY1Axis() {
             let viewModel: DualYAxisChartViewModel = this.DualYAxisChartViewModel;
@@ -441,16 +600,10 @@ private CreateBorder(){
             var y1Axis = d3.svg.axis()
                 .scale(y1Scale)
                 .orient('left')
-                .innerTickSize(8)// plot.width)
+                .innerTickSize(8)
                 .ticks(8)
                 .tickFormat(function (d) { return y1formatValue(d) });
-            /* if (!viewModel.showGridLines) {
-                 y1Axis
-                     .innerTickSize(0)
-                     .tickPadding(10);
-*/
 
-            //this.svgGroupMain.select('#y1Axis').remove();
             this.svgGroupMain
                 .append('g')
                 // .classed("y1Axis",true)
@@ -460,24 +613,14 @@ private CreateBorder(){
                 .call(y1Axis);
             this.svgGroupMain.append("text")
                 .attr("transform", "rotate(-90)")
-                .attr("y", 0 - plot.xAxisOffset)
+                //.attr("y", 0 - plot.y1AxisIndent / 2 - this.padding)
+                .attr("y", 0 - this.padding * 5)
                 .attr("x", 0 - (plot.height / 2))
                 .attr("dy", "1em")
                 .style("text-anchor", "middle")
                 .style("font-size", vmYaxis.TitleSize + 'px')
                 .style("fill", vmYaxis.TitleColor)
                 .text(vmYaxis.AxisTitle);
-            /* var y1GridlineAxis = d3.svg.axis()
-                 .scale(y1Scale)
-                 .orient('left')
-                 .innerTickSize(8)
-                 .tickPadding(10)
-                 .outerTickSize(6);
-              this.svgGroupMain
-                 .append('g')
-                 .attr('class', 'gridLine')
-                 .call(y1GridlineAxis)
-                 .style("font-size", '0px');*/
         }
 
         private CreateY2Axis() {
@@ -522,24 +665,13 @@ private CreateBorder(){
                 .call(y2Axis);
             this.svgGroupMain.append("text")
                 .attr("x", (plot.height / 2))
-                .attr('transform', 'translate(' + (plot.width + plot.xAxisOffset) + ',0) rotate(90)')
+                //.attr('transform', 'translate(' + (plot.width + plot.y2AxisIndent / 2 + this.padding) + ',0) rotate(90)')
+                .attr('transform', 'translate(' + (plot.width + this.padding * 5) + ',0) rotate(90)')
                 .attr("dy", "1em")
                 .style("text-anchor", "middle")
                 .style("font-size", vmY2axis.TitleSize + 'px')
                 .style("fill", vmY2axis.TitleColor)
                 .text(vmY2axis.AxisTitle);
-            /* var y2GridlineAxis = d3.svg.axis()
-                 .scale(y2Scale)
-                 .orient('left')
-                 .innerTickSize(8)
-                 .tickPadding(10)
-                 .outerTickSize(6);    
-             this.svgGroupMain
-                 .append('g')
-                 .attr('class', 'gridLine')
-                  .attr('transform', 'translate(' + plot.width + ',0)')
-                 .call(y2GridlineAxis)
-                 .style("font-size", '0px');*/
         }
 
         private GetMinMaxX() {
@@ -569,34 +701,14 @@ private CreateBorder(){
             this.DualYAxisChartViewModel.maxX = maxValue;
         }
 
-        private PlotData(series: series[], scale: any) {
+        private PlotData2(series: series[]) {
             let viewModel: DualYAxisChartViewModel = this.DualYAxisChartViewModel;
+            var xScale = this.xScale;
+            var yScale;// = scale;
             for (let k = 0; k < series.length; k++) {
                 // Line      
-                var xScale = this.xScale;
-                var yScale = scale;
-                var d3line3 = d3.svg.line()
-                    .x(function (d) { return xScale(d['xValue']) })
-                    .y(function (d) { return yScale(d['yValue']) });
-                let dp: any[] = series[k].AxisData;
-
-                this.svgGroupMain.append("svg:path").classed('trend_Line', true)
-                    .attr("d", d3line3(dp))
-                    .style("stroke-width", '1.5px')
-                    .style({ "stroke": series[k].color })
-                    .style("fill", 'none');
-            }
-        }
-
-        private PlotData2(series: series[], scale: any, axis: string) {
-            let viewModel: DualYAxisChartViewModel = this.DualYAxisChartViewModel;
-            for (let k = 0; k < series.length; k++) {
-                // Line      
-                var xScale = this.xScale;
-                var yScale = scale;               
-                if(series[k].axis == 'y1'){
+                if (series[k].axis == 'y1')
                     yScale = this.y1Scale;
-                }
                 else
                     yScale = this.y2Scale;
                 var d3line3 = d3.svg.line()
@@ -606,20 +718,74 @@ private CreateBorder(){
 
                 this.svgGroupMain.append("svg:path").classed('trend_Line', true)
                     .attr("d", d3line3(dp))
+                    .attr("id", "tag" + k.toString())
                     .style("stroke-width", '1.5px')
-                    .style({ "stroke": series[k].color })
+                    .style("stroke", series[k].color)
                     .style("fill", 'none');
+
+                var dots = this.svgGroupMain.attr("id", "groupOfCircles").selectAll("dot")
+                    .data(dp)
+                    .enter().append("circle")
+                    .style("fill", 'transparent')
+                    .attr("r", 4)
+                    .attr("cx", function (d) { return xScale(d['xValue']); })
+                    .attr("cy", function (d) { return yScale(d['yValue']); });
+
+                this.CreateToolTip(dots, series[k].seriesName, series[k].color);
             }
+
+        }
+
+        private CreateToolTip(series: any, seriesName: string, color: string) {
+            let viewModel = this.DualYAxisChartViewModel;
+            var dateFormat;
+            if (viewModel.isDateRange)
+                dateFormat = d3.time.format(viewModel.xAxis.AxisFormat);
+            else
+                dateFormat = d3.format(viewModel.xAxis.AxisFormat);
+
+            this.tooltipServiceWrapper.addTooltip(series,
+                (tooltipEvent: TooltipEventArgs<number>) => Visual.getTooltipData(tooltipEvent.data, color, seriesName, dateFormat),
+                (tooltipEvent: TooltipEventArgs<number>) => null);
+        }
+
+        private static getTooltipData(value: any, datacolor: string, seriesName: string, xFormat: any): VisualTooltipDataItem[] {
+            return [{
+                displayName: seriesName + ' ' + xFormat(value['xValue']).toString(),
+                value: value['yValue'].toString(),
+                color: datacolor
+            }];
+        }
+
+        /*['#7fc97f','#beaed4','#fdc086','#ffff99','#386cb0','#f0027f']
+        ['#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
+        ['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c']
+        ['#fbb4ae','#b3cde3','#ccebc5','#decbe4','#fed9a6','#ffffcc']
+        ['#b3e2cd','#fdcdac','#cbd5e8','#f4cae4','#e6f5c9','#fff2ae']
+        ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33']
+        ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f']
+        ['#8dd3c7','#ffffb3','#bebada','#fb8072','#80b1d3','#fdb462']*/
+
+        private CreateColorPalettes() {
+            var palettes = [];
+            let p: colorPalette = { name: '', colors: [''] };
+            p = { name: "distinct", colors: ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6'] };
+            palettes.push(p);
+            p = { name: "pastel1", colors: ['#fbb4ae', '#b3cde3', '#ccebc5', '#decbe4', '#fed9a6', '#ffffcc', '#e5d8bd', '#fddaec', '#f2f2f2'] };
+            palettes.push(p);
+            p = { name: "contrast", colors: ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999'] };
+            palettes.push(p);
+            p = { name: "pastel2", colors: ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9'] };
+            palettes.push(p);
+            this.colorPalettes = palettes;
         }
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] {
             var instances: VisualObjectInstance[] = [];
             var viewModel = this.DualYAxisChartViewModel;
             var objectName = options.objectName;
-            let dataView = this.dataView;
-            let categorical = dataView.categorical;
-
-            var metadataColumns: DataViewMetadataColumn[] = this.dataView.metadata.columns;
+         //   let dataView = this.dataView;
+           // let categorical = dataView.categorical;           
 
             switch (objectName) {
                 case 'chart':
@@ -627,10 +793,10 @@ private CreateBorder(){
                         objectName: objectName,
                         selector: null,
                         properties: {
-                            dataColor: viewModel.data.DataColor,
                             lineColor: viewModel.data.LineColor,
                             lineStyle: viewModel.data.LineStyle,
-                            showGridLines: viewModel.showGridLines
+                            showGridLines: viewModel.showGridLines,
+                            legendPosition: viewModel.legendPos
                         }
                     };
                     instances.push(config);
@@ -664,7 +830,6 @@ private CreateBorder(){
                                 xAxisDateFormat: viewModel.xAxis.AxisFormat,
                             }
                         };
-
                     }
                     instances.push(config);
                     break;
@@ -698,43 +863,23 @@ private CreateBorder(){
                     };
                     instances.push(config);
                     break;
-
-
-                case 'y1ColorSelector':
-                    for (let k = 0; k < viewModel.dataPoints.length; k++) {
-                        var currentColumn: DataViewMetadataColumn = metadataColumns[k + 1];
-
-                        instances.push({
-                            objectName: objectName,
-                            displayName: viewModel.dataPoints[k].seriesName,
-                            properties: {
-                                fill: {
-                                    solid: {
-                                        //                                        color: getValue<Fill>(currentColumn.objects, objectName, "fill", 'red').solid.color
-                                        color: viewModel.dataPoints[k].color
-                                    }
+                case 'yColorSelector':
+                    var config: VisualObjectInstance = {
+                        objectName: objectName,
+                        selector: null,
+                        properties: {
+                            lineColor: viewModel.colorPalette,
+                        },                        
+                        validValues: {
+                            lineColor: {
+                                numberRange: {
+                                    min: 0,
+                                    max: this.colorPalettes.length - 1
                                 }
-                            },
-                            // selector: viewModel.y1DataPoints[k].selectionId 
-                            selector: { metadata: currentColumn.queryName }
-                        });
-                    }
-                    break;
-                case 'y2ColorSelector':
-                    for (let k = 0; k < viewModel.dataPoints.length; k++) {
-                        instances.push({
-                            objectName: objectName,
-                            displayName: viewModel.dataPoints[k].seriesName,
-                            properties: {
-                                fill: {
-                                    solid: {
-                                        color: viewModel.dataPoints[k].color
-                                    }
-                                }
-                            },
-                            selector: viewModel.dataPoints[k].selectionId
-                        });
-                    }
+                            }
+                        }
+                    };
+                    instances.push(config);
                     break;
             }
             return instances;

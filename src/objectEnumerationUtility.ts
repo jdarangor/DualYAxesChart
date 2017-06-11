@@ -80,13 +80,53 @@ module powerbi.extensibility.visual {
             if (objects) {
                 var config = objects[objectName];
                 if (config) {
-                    let fill:Fill = <Fill>config[propertyName];
+                    let fill: Fill = <Fill>config[propertyName];
                     if (fill !== undefined && fill.solid !== undefined && fill.solid.color !== undefined)
                         return fill.solid.color;
                 }
             }
         }
-        //return { solid: { color: defaultValue}}; // { solid: { color: '#30ADFF' } };
-        return  defaultValue;
+        return defaultValue;
+    }
+
+    export function getSelectorFill(category: DataViewCategoryColumn, index: number, objectName: string, propertyName: string, defaultValue: string): string {
+        let categoryObjects = category.objects;
+
+        alert(category.values);
+        if (categoryObjects) {
+            alert('h2');
+            let categoryObject: DataViewObject = categoryObjects[index];
+            if (categoryObject) {
+                alert('h3');
+                let object = categoryObject[objectName];
+                if (object) {
+                    alert('h4');
+                    let property = object[propertyName];
+                    if (property !== undefined) {
+                        alert('h5');
+                        return <string>(<Fill>property).solid.color;
+                    }
+                }
+            }
+        }
+        return defaultValue;
+    }
+    export function getValue2(objects: DataViewObjects, objectName: string, propertyName: string, defaultValue: string):string {
+        if (objects) {
+          
+            let object = objects[objectName];
+          // alert(objects[objectName].toString());
+            if (object) {
+//alert(object.toString());
+
+                let property = object[propertyName];
+//alert('prop ' +  <string>(<Fill>property).solid.color);
+
+                if (property !== undefined) {
+                    return <string>(<Fill>property).solid.color;
+                }
+            }
+        }
+        return defaultValue;
     }
 }
