@@ -1,5 +1,5 @@
 # DualYAxesChart
 Chart with dual (Y1 and Y2) axes
-- User-control over line colors and which Y axis to associate data with
+- Line colors selected from palettes with good contrast
 - Automatic scaling of Y axes based on data ranges
-- Legend location and interaction with chart lines
+- 4 Legend locations and ability to toggle visibility of chart lines
