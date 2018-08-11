@@ -127,124 +127,133 @@ module powerbi.extensibility.visual {
         let categorical = dataViews[0].categorical;
         let category = categorical.categories[0];
         let seriesDataPoints: ChartDataPoint[] = [];
+        let dvmobjs = dataViews[0].metadata.objects;
         var minY1: number;
         var maxY1: number;
         var minY2: number;
         var maxY2: number;
         var xAxisType: string = "NotUsable";
 
-        if (category.source.type.dateTime.valueOf() == true || category.source.type.numeric.valueOf() == true) {
-            if (category.source.type.dateTime.valueOf() == true)
-                xAxisType = "date";
-            else
-                xAxisType = "numeric";
-        }
-
-        if (xAxisType != "NotUsable") {
-            var xAxisFormat: any;
-            if (xAxisType == "date")
-                xAxisFormat = getValue<string>(dataViews[0].metadata.objects, 'xAxis', 'xAxisDateFormat', '%d-%b-%y');
-            else
-                xAxisFormat = getValue<string>(dataViews[0].metadata.objects, 'xAxis', 'xAxisFormat', '.3s')
-
-            let chartData: LineData = {
-                LineColor: getFill(dataViews[0], 'chart', 'lineColor', '#0000FF'),
-                LineStyle: getValue<string>(dataViews[0].metadata.objects, 'chart', 'lineStyle', '')
-            };
-            let xAxisData: AxisData = {
-                AxisTitle: getValue<string>(dataViews[0].metadata.objects, 'xAxis', 'xAxisTitle', 'Default Value'),
-                TitleColor: getFill(dataViews[0], 'xAxis', 'xAxisTitleColor', '#A9A9A9'),
-                TitleSize: getValue<number>(dataViews[0].metadata.objects, 'xAxis', 'xAxisTitleSize', 12),
-                AxisLabelSize: getValue<number>(dataViews[0].metadata.objects, 'xAxis', 'xAxisLabelSize', 12),
-                AxisLabelColor: getFill(dataViews[0], 'xAxis', 'xAxisLabelColor', '#2F4F4F'),
-                AxisFormat: xAxisFormat
-            };
-            let yAxisData: AxisData = {
-                AxisTitle: getValue<string>(dataViews[0].metadata.objects, 'yAxis', 'yAxisTitle', 'Default Value'),
-                TitleColor: getFill(dataViews[0], 'yAxis', 'yAxisTitleColor', '#A9A9A9'),
-                TitleSize: getValue<number>(dataViews[0].metadata.objects, 'yAxis', 'yAxisTitleSize', 12),
-                AxisLabelSize: getValue<number>(dataViews[0].metadata.objects, 'yAxis', 'yAxisLabelSize', 12),
-                AxisLabelColor: getFill(dataViews[0], 'yAxis', 'yAxisLabelColor', '#2F4F4F'),
-                AxisFormat: getValue<string>(dataViews[0].metadata.objects, 'yAxis', 'yAxisFormat', '.3s')
-            };
-            let y2AxisData: AxisData = {
-                AxisTitle: getValue<string>(dataViews[0].metadata.objects, 'y2Axis', 'y2AxisTitle', 'Default Value'),
-                TitleColor: getFill(dataViews[0], 'y2Axis', 'y2AxisTitleColor', '#A9A9A9'),
-                TitleSize: getValue<number>(dataViews[0].metadata.objects, 'y2Axis', 'y2AxisTitleSize', 12),
-                AxisLabelSize: getValue<number>(dataViews[0].metadata.objects, 'y2Axis', 'y2AxisLabelSize', 12),
-                AxisLabelColor: getFill(dataViews[0], 'y2Axis', 'y2AxisLabelColor', '#2F4F4F'),
-                AxisFormat: getValue<string>(dataViews[0].metadata.objects, 'y2Axis', 'y2AxisFormat', '.3s')
-            };
-            let legendPos: string = getValue<string>(dataViews[0].metadata.objects, 'chart', 'legendPosition', 'none');
-            var paletteId = getValue<number>(dataViews[0].metadata.objects, 'yColorSelector', 'lineColor', 0);
-            var c = cp[paletteId].colors;
-
-            for (let k = 0; k < categorical.values.length; k++) {  //1,2..
-                seriesDataPoints = [];
-                for (let i = 0; i < categorical.values[k].values.length; i++) {
-                    seriesDataPoints.push({ xValue: <number>categorical.categories[0].values[i], yValue: <number>categorical.values[k].values[i] });
-                }
-
-                var selectionId = host.createSelectionIdBuilder()
-                    .withCategory(category, k)
-                    .createSelectionId();
-
-                if (categorical.values[k].source.roles['y2Value'] == true) {
-                    viewModel.dataPoints.push({
-                        AxisData: seriesDataPoints,
-                        color: c[k % c.length],// getSelectorFill(category, k, 'yColorSelector', 'fill', 'purple'),
-                        seriesName: categorical.values[k].source.displayName,
-                        selectionId: selectionId,
-                        axis: 'y2'
-                    });
-                    if (isNaN(minY2))
-                        minY2 = <number>categorical.values[k].minLocal;
-                    if (isNaN(maxY2))
-                        maxY2 = <number>categorical.values[k].maxLocal;
-                    maxY2 = Math.max(<number>categorical.values[k].maxLocal, maxY2);
-                    minY2 = Math.min(<number>categorical.values[k].minLocal, minY2);
-                }
+        try{
+        
+            if (category.source.type.dateTime.valueOf() == true || category.source.type.numeric.valueOf() == true) {
+                if (category.source.type.dateTime.valueOf() == true)
+                    xAxisType = "date";
                 else
-                    if (categorical.values[k].source.roles['y1Value'] = true) {
-                        viewModel.dataPoints.push({
-                            AxisData: seriesDataPoints,
-                            color: c[k % c.length],//getSelectorFill(category, k, 'yColorSelector', 'fill', 'purple'),
-                            seriesName: categorical.values[k].source.displayName,
-                            selectionId: selectionId,
-                            axis: 'y1'
-                        });
-                        if (isNaN(maxY1))
-                            maxY1 = <number>categorical.values[k].maxLocal;
-                        if (isNaN(minY1))
-                            minY1 = <number>categorical.values[k].minLocal;
-                        maxY1 = Math.max(<number>categorical.values[k].maxLocal, maxY1);
-                        minY1 = Math.min(<number>categorical.values[k].minLocal, minY1);
-                    }
+                    if(category.source.type.numeric.valueOf() == true)
+                        xAxisType = "numeric";
             }
 
-            //alert('here');
-            return {
-                dataPoints: viewModel.dataPoints,
-                minX: null,
-                maxX: null,
-                minY1: minY1,
-                maxY1: maxY1,
-                minY2: minY2,
-                maxY2: maxY2,
-                data: chartData,
-                xAxis: xAxisData,
-                yAxis: yAxisData,
-                y2Axis: y2AxisData,
-                showGridLines: getValue<boolean>(dataViews[0].metadata.objects, 'chart', 'showGridLines', true),
-                isDateRange: (xAxisType == "date"),
-                legendPos: legendPos,
-                legendRowHeight: 14,
-                colorPalette: paletteId
-            };
+            if (xAxisType != "NotUsable") {
+                var xAxisFormat: any;
+                if (xAxisType == "date")
+                    xAxisFormat = getValue<string>(dvmobjs, 'xAxis', 'xAxisDateFormat', '%d-%b-%y');
+                else
+                    xAxisFormat = getValue<string>(dvmobjs, 'xAxis', 'xAxisFormat', '.3s')
+
+                let chartData: LineData = {
+                    LineColor: getFill(dataViews[0], 'chart', 'lineColor', '#0000FF'),
+                    LineStyle: getValue<string>(dvmobjs, 'chart', 'lineStyle', '')
+                };
+                let xAxisData: AxisData = {
+                    AxisTitle: getValue<string>(dvmobjs, 'xAxis', 'xAxisTitle', 'Default Value'),
+                    TitleColor: getFill(dataViews[0], 'xAxis', 'xAxisTitleColor', '#A9A9A9'),
+                    TitleSize: getValue<number>(dvmobjs, 'xAxis', 'xAxisTitleSize', 12),
+                    AxisLabelSize: getValue<number>(dvmobjs, 'xAxis', 'xAxisLabelSize', 12),
+                    AxisLabelColor: getFill(dataViews[0], 'xAxis', 'xAxisLabelColor', '#2F4F4F'),
+                    AxisFormat: xAxisFormat
+                };
+                let yAxisData: AxisData = {
+                    AxisTitle: getValue<string>(dvmobjs, 'yAxis', 'yAxisTitle', 'Default Value'),
+                    TitleColor: getFill(dataViews[0], 'yAxis', 'yAxisTitleColor', '#A9A9A9'),
+                    TitleSize: getValue<number>(dvmobjs, 'yAxis', 'yAxisTitleSize', 12),
+                    AxisLabelSize: getValue<number>(dvmobjs, 'yAxis', 'yAxisLabelSize', 12),
+                    AxisLabelColor: getFill(dataViews[0], 'yAxis', 'yAxisLabelColor', '#2F4F4F'),
+                    AxisFormat: getValue<string>(dvmobjs, 'yAxis', 'yAxisFormat', '.3s')
+                };
+                let y2AxisData: AxisData = {
+                    AxisTitle: getValue<string>(dvmobjs, 'y2Axis', 'y2AxisTitle', 'Default Value'),
+                    TitleColor: getFill(dataViews[0], 'y2Axis', 'y2AxisTitleColor', '#A9A9A9'),
+                    TitleSize: getValue<number>(dvmobjs, 'y2Axis', 'y2AxisTitleSize', 12),
+                    AxisLabelSize: getValue<number>(dvmobjs, 'y2Axis', 'y2AxisLabelSize', 12),
+                    AxisLabelColor: getFill(dataViews[0], 'y2Axis', 'y2AxisLabelColor', '#2F4F4F'),
+                    AxisFormat: getValue<string>(dvmobjs, 'y2Axis', 'y2AxisFormat', '.3s')
+                };
+                let legendPos: string = getValue<string>(dvmobjs, 'chart', 'legendPosition', 'none');
+                var paletteId = getValue<number>(dvmobjs, 'yColorSelector', 'lineColor', 0);
+                var c = cp[paletteId].colors;
+
+                for (let k = 0; k < categorical.values.length; k++) {  //1,2..
+                    seriesDataPoints = [];
+                    for (let i = 0; i < categorical.values[k].values.length; i++) {
+                        seriesDataPoints.push({ xValue: categorical.categories[0].values[i], yValue: <number>categorical.values[k].values[i] });
+                    }
+
+                    var selectionId = host.createSelectionIdBuilder()
+                        .withCategory(category, k)
+                        .createSelectionId();
+
+                    if (categorical.values[k].source.roles['y2Value'] == true) {
+                        viewModel.dataPoints.push({
+                            AxisData: seriesDataPoints,
+                            color: c[k % c.length],// getSelectorFill(category, k, 'yColorSelector', 'fill', 'purple'),
+                            seriesName: categorical.values[k].source.displayName,
+                            selectionId: selectionId,
+                            axis: 'y2'
+                        });
+                        if (isNaN(minY2))
+                            minY2 = <number>categorical.values[k].minLocal;
+                        if (isNaN(maxY2))
+                            maxY2 = <number>categorical.values[k].maxLocal;
+                        maxY2 = Math.max(<number>categorical.values[k].maxLocal, maxY2);
+                        minY2 = Math.min(<number>categorical.values[k].minLocal, minY2);
+                    }
+                    else
+                        if (categorical.values[k].source.roles['y1Value'] = true) {
+                            viewModel.dataPoints.push({
+                                AxisData: seriesDataPoints,
+                                color: c[k % c.length],//getSelectorFill(category, k, 'yColorSelector', 'fill', 'purple'),
+                                seriesName: categorical.values[k].source.displayName,
+                                selectionId: selectionId,
+                                axis: 'y1'
+                            });
+                            if (isNaN(maxY1))
+                                maxY1 = <number>categorical.values[k].maxLocal;
+                            if (isNaN(minY1))
+                                minY1 = <number>categorical.values[k].minLocal;
+                            maxY1 = Math.max(<number>categorical.values[k].maxLocal, maxY1);
+                            minY1 = Math.min(<number>categorical.values[k].minLocal, minY1);
+                        }
+                }
+
+                //alert('here');
+                return {
+                    dataPoints: viewModel.dataPoints,
+                    minX: null,
+                    maxX: null,
+                    minY1: minY1,
+                    maxY1: maxY1,
+                    minY2: minY2,
+                    maxY2: maxY2,
+                    data: chartData,
+                    xAxis: xAxisData,
+                    yAxis: yAxisData,
+                    y2Axis: y2AxisData,
+                    showGridLines: getValue<boolean>(dataViews[0].metadata.objects, 'chart', 'showGridLines', true),
+                    isDateRange: (xAxisType == "date"),
+                    legendPos: legendPos,
+                    legendRowHeight: 14,
+                    colorPalette: paletteId
+                };
+            }
+            else {
+                return viewModel;
+            }
         }
-        else {
+        catch(e){
             return viewModel;
         }
+
     }
 
     export class Visual implements IVisual {
@@ -301,7 +310,7 @@ module powerbi.extensibility.visual {
                 this.PlotData2(this.DualYAxisChartViewModel.dataPoints);
                 this.CreateBorder();
                 this.CreateLegend();
-
+                this.DrawToolTip();
             }
         }
 
@@ -357,8 +366,6 @@ module powerbi.extensibility.visual {
 
             let viewModel: DualYAxisChartViewModel = this.DualYAxisChartViewModel;
             let vmXaxis = viewModel.xAxis;
-            let vmYaxis = viewModel.yAxis;
-            let vmY2axis = viewModel.y2Axis;
             this.GetMinMaxX();
             var xScale;
             var dateFormat;
@@ -384,10 +391,7 @@ module powerbi.extensibility.visual {
                 .orient('bottom')
                 .tickPadding(8)
                 .tickFormat(dateFormat);
-            /*   if (!viewModel.showGridLines) {
-                   xAxis.innerTickSize(0);
-               }
-   */
+
             this.svgGroupMain
                 .append('g')
                 .attr('class', 'x axis')
@@ -432,7 +436,7 @@ module powerbi.extensibility.visual {
                     leftPos = plot.y1AxisIndent;
                     var numLines = viewModel.dataPoints.length;
                     var numLegendRows = Math.ceil(numLines / 5);
-                    topPos = this.viewPort.height - viewModel.legendRowHeight * numLegendRows; 
+                    topPos = this.viewPort.height - viewModel.legendRowHeight * numLegendRows;
                     break;
                 case 'left':
                     leftPos = 4;
@@ -600,14 +604,12 @@ module powerbi.extensibility.visual {
 
             this.svgGroupMain
                 .append('g')
-                // .classed("y1Axis",true)
                 .attr('class', 'y1 axis')
                 .style('fill', vmYaxis.AxisLabelColor)
                 .style("font-size", vmYaxis.AxisLabelSize + 'px')
                 .call(y1Axis);
             this.svgGroupMain.append("text")
                 .attr("transform", "rotate(-90)")
-                //.attr("y", 0 - plot.y1AxisIndent / 2 - this.padding)
                 .attr("y", 0 - this.padding * 5)
                 .attr("x", 0 - (plot.height / 2))
                 .attr("dy", "1em")
@@ -659,7 +661,6 @@ module powerbi.extensibility.visual {
                 .call(y2Axis);
             this.svgGroupMain.append("text")
                 .attr("x", (plot.height / 2))
-                //.attr('transform', 'translate(' + (plot.width + plot.y2AxisIndent / 2 + this.padding) + ',0) rotate(90)')
                 .attr('transform', 'translate(' + (plot.width + this.padding * 5) + ',0) rotate(90)')
                 .attr("dy", "1em")
                 .style("text-anchor", "middle")
@@ -675,22 +676,17 @@ module powerbi.extensibility.visual {
             var minValue: any;
 
             if (viewModel.isDateRange) {
-                maxValue = new Date(data[0].xValue);
-                minValue = new Date(data[0].xValue);
+                maxValue = new Date();
+                minValue = new Date();
             }
             else {
-                maxValue = new Number(data[0].xValue);
-                minValue = new Number(data[0].xValue);
+                maxValue = new Number();
+                minValue = new Number();
             }
-            for (var i in data) {
-                var dt = data[i].xValue;
-                if (maxValue < dt) {
-                    maxValue = dt;
-                }
-                if (minValue > dt) {
-                    minValue = dt;
-                }
-            }
+
+            minValue = d3.min(data, function (d) { return d.xValue });
+            maxValue = d3.max(data, function (d) { return d.xValue });
+
             this.DualYAxisChartViewModel.minX = minValue;
             this.DualYAxisChartViewModel.maxX = maxValue;
         }
@@ -745,7 +741,8 @@ module powerbi.extensibility.visual {
 
         private static getTooltipData(value: any, datacolor: string, seriesName: string, xFormat: any): VisualTooltipDataItem[] {
             return [{
-                displayName: seriesName + ' ' + xFormat(value['xValue']).toString(),
+                header: xFormat(value['xValue']).toString(),
+                displayName: seriesName,
                 value: value['yValue'].toString(),
                 color: datacolor
             }];
@@ -774,12 +771,87 @@ module powerbi.extensibility.visual {
             this.colorPalettes = palettes;
         }
 
+        private DrawToolTip() {
+            let viewModel: DualYAxisChartViewModel = this.DualYAxisChartViewModel;
+            //     let crossHairLine = viewModel.crossHairLine;
+            var xScale = this.xScale;
+
+            //add focus lines and circle
+            var plot = this.plot;
+            var point = [];
+            for (let i = 0; i < viewModel.dataPoints.length; i++) {
+                var ob = viewModel.dataPoints[i];
+                //  var dtDate: any = new Date(ob.xValue);
+                var x = ob.AxisData[0].xValue[i];
+                //var y = ob.AxisData[0].yValue[i];
+                //creating line points                         
+                point.push([x]);
+            }
+
+
+            var focus = this.svgGroupMain.append("g")
+                .style("display", "none");
+            focus.append("circle")
+                .attr("class", "y")
+                .style("fill", "none")
+                .style("stroke", "red")
+                .attr("id", "focuscircle")
+                .attr("r", 4);
+            focus.append('line')
+                .attr('id', 'focusLineX')
+                .attr('class', 'focusLine');
+           /* focus.append('line')
+                .attr('id', 'focusLineY')
+                .attr('class', 'focusLine');
+            focus.append("text")
+                .attr('id', 'labelText')
+                .attr("x", 9)
+                .attr("dy", ".35em");
+            focus.append("text")
+                .attr('id', 'yAxisText')
+                .attr("dy", ".35em");*/
+            focus.append("text")
+                .attr('id', 'xAxisText')
+                .attr("dx", ".15em");
+            // append the rectangle to capture mouse
+            this.svgGroupMain.append("rect")
+                .attr("width", plot.width)
+                .attr("height", plot.height)
+                .style("fill", "none")
+                .style("pointer-events", "all")
+                .on("mouseover", function () { focus.style("display", "null"); })
+                .on("mouseout", function () { focus.style("display", "none"); })
+                .on("mousemove", mousemove);
+            var bisectDate = d3.bisector(function (d) { return d[0]; }).left;
+
+            function mousemove() {
+                //alert(d3.mouse(this)[1].toString());      
+                var x0 = xScale.invert(d3.mouse(this)[0]);
+            /*    var i = bisectDate(point, x0)
+                var d0 = point[i - 1];
+                var d1 = point[i];
+                var d = x0 - d0[0] > d1[0] - x0 ? d1 : d0;*/
+                var x = 10;// xScale(40);
+                var y = 200;//y1Scale(d[1]);
+                /*focus.select('#focuscircle')
+                    .attr('cx', 0) 
+                    .attr('cy', 1000);*/
+            
+                var yDomain = ([viewModel.minY1, viewModel.maxY1]);
+                var yScale2 = d3.scale.linear().range([plot.height, 0]).domain(yDomain);
+
+               focus.select('#focusLineX')
+                            .attr('x1', x).attr('y1', yScale2(yDomain[0]))
+                            .attr('x2', x).attr('y2', yScale2(yDomain[1]))
+                            .style("stroke", 'red');
+               
+            }
+        }
+
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] {
             var instances: VisualObjectInstance[] = [];
             var viewModel = this.DualYAxisChartViewModel;
-            var objectName = options.objectName;
-         //   let dataView = this.dataView;
-           // let categorical = dataView.categorical;           
+            var objectName = options.objectName;        
 
             switch (objectName) {
                 case 'chart':
@@ -863,7 +935,7 @@ module powerbi.extensibility.visual {
                         selector: null,
                         properties: {
                             lineColor: viewModel.colorPalette,
-                        },                        
+                        },
                         validValues: {
                             lineColor: {
                                 numberRange: {
