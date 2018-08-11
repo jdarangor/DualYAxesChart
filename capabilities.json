@@ -84,6 +84,10 @@
                                 "value": ""
                             },
                             {
+                                "displayName": "Small Dash",
+                                "value": "6,4"
+                            },
+                            {
                                 "displayName": "Dash",
                                 "value": "10,4"
                             },
@@ -92,12 +96,16 @@
                                 "value": "2,2"
                             },
                             {
-                                "displayName": "Dash-Dot",
-                                "value": "10,2,4"
+                                "displayName": "Small Dot",
+                                "value": "1,1"
                             },
                             {
-                                "displayName": "Small Dash",
-                                "value": "6,4"
+                                "displayName": "Sparse Dot",
+                                "value": "1,4"
+                            },
+                            {
+                                "displayName": "Dash-Dot",
+                                "value": "10,2,4"
                             }
                         ]
                     },
@@ -222,6 +230,34 @@
                     "type": {
                         "enumeration": [
                             {
+                                "displayName": "Day (as number)",
+                                "value": "%d"
+                            },
+                            {
+                                "displayName": "Abbreviated Weekday Name",
+                                "value": "%a"
+                            },
+                            {
+                                "displayName": "Full Weekday Name",
+                                "value": "%A"
+                            },
+                            {
+                                "displayName": "Weekday as number",
+                                "value": "%w"
+                            },
+                            {
+                                "displayName": "d-m",
+                                "value": "%-d-%-b"
+                            },
+                            {
+                                "displayName": "d-m-yy",
+                                "value": "%-d-%-b-%y"
+                            },
+                            {
+                                "displayName": "d-m-yy hh:mm",
+                                "value": "%-d-%-b-%y %H:%M"
+                            },
+                            {
                                 "displayName": "dd-mm",
                                 "value": "%d-%b"
                             },
@@ -234,6 +270,38 @@
                                 "value": "%d-%b-%y %H:%M"
                             },
                             {
+                                "displayName": "Abbreviated Month Name",
+                                "value": "%b"
+                            },
+                            {
+                                "displayName": "Full Month Name",
+                                "value": "%B"
+                            },
+                            {
+                                "displayName": "Month as number",
+                                "value": "%-m"
+                            },
+                            {
+                                "displayName": "Month as padded number",
+                                "value": "%m"
+                            },
+                            {
+                                "displayName": "m-d",
+                                "value": "%-b-%-d"
+                            },
+                            {
+                                "displayName": "m-yy",
+                                "value": "%-b-%y"
+                            },
+                            {
+                                "displayName": "m-d-yy",
+                                "value": "%-b-%-d-%y"
+                            },
+                            {
+                                "displayName": "mm-dd",
+                                "value": "%b-%d"
+                            },
+                            {
                                 "displayName": "mm-yy",
                                 "value": "%b-%y"
                             },
@@ -244,6 +312,34 @@
                             {
                                 "displayName": "mm-dd-yy hh:mm",
                                 "value": "%b-%d-%y %H:%M"
+                            },
+                            {
+                                "displayName": "Year (without century)",
+                                "value": "%y"
+                            },
+                            {
+                                "displayName": "Year (with century)",
+                                "value": "%Y"
+                            },
+                            {
+                                "displayName": "Hours",
+                                "value": "%H"
+                            },
+                            {
+                                "displayName": "Minutes",
+                                "value": "%M"
+                            },
+                            {
+                                "displayName": "Date as m/d/Y",
+                                "value": "%x"
+                            },
+                            {
+                                "displayName": "Week Number of Year (From Sunday)",
+                                "value": "%U"
+                            },
+                            {
+                                "displayName": "Week Number of Year (From Monday)",
+                                "value": "%W"
                             }
                         ]
                     },
@@ -297,6 +393,10 @@
                     "type": {
                         "enumeration": [
                             {
+                                "displayName": "All",
+                                "value": "s"
+                            },
+                            {
                                 "displayName": "0",
                                 "value": ".1s"
                             },
@@ -319,6 +419,26 @@
                             {
                                 "displayName": "000000",
                                 "value": ".6s"
+                            },
+                            {
+                                "displayName": "All %",
+                                "value": "%"
+                            },
+                            {
+                                "displayName": "% - no decimals",
+                                "value": ".0%"
+                            },
+                            {
+                                "displayName": "% - 1 decimal",
+                                "value": ".1%"
+                            },
+                            {
+                                "displayName": "% - 2 decimals",
+                                "value": ".2%"
+                            },
+                            {
+                                "displayName": "% - 3 decimals",
+                                "value": ".3%"
                             }
                         ]
                     },
@@ -372,6 +492,10 @@
                     "type": {
                         "enumeration": [
                             {
+                                "displayName": "All",
+                                "value": "s"
+                            },
+                            {
                                 "displayName": "0",
                                 "value": ".1s"
                             },
@@ -394,6 +518,26 @@
                             {
                                 "displayName": "000000",
                                 "value": ".6s"
+                            },
+                            {
+                                "displayName": "All %",
+                                "value": "%"
+                            },
+                            {
+                                "displayName": "% - no decimals",
+                                "value": ".0%"
+                            },
+                            {
+                                "displayName": "% - 1 decimal",
+                                "value": ".1%"
+                            },
+                            {
+                                "displayName": "% - 2 decimals",
+                                "value": ".2%"
+                            },
+                            {
+                                "displayName": "% - 3 decimals",
+                                "value": ".3%"
                             }
                         ]
                     },
