@@ -3,12 +3,14 @@
         {
             "displayName": "X Axis Data",
             "name": "xAxis",
-            "kind": "Grouping"
+            "kind": "Grouping",
+            "description": "Select X Axis data that is either numeric or date-based"
         },
         {
             "displayName": "Y1 Axis Data",
             "name": "y1Value",
             "kind": "Measure",
+            "description": "Select Y1 Axis data that is numeric",
             "requiredTypes": [
                 {
                     "numeric": true
@@ -19,6 +21,7 @@
             "displayName": "Y2 Axis Data",
             "name": "y2Value",
             "kind": "Measure",
+            "description": "Select Y2 Axis data that is numeric",
             "requiredTypes": [
                 {
                     "numeric": true
@@ -119,7 +122,6 @@
                     "displayName": "Line Style",
                     "description": "Select line style"
                 },
-                
                 "legendPosition": {
                     "type": {
                         "enumeration": [
@@ -151,6 +153,12 @@
                     },
                     "displayName": "Show Legend",
                     "description": "Select legend position"
+                },
+                "ColorPalette": {
+                    "type": {
+                        "integer": true
+                    },
+                    "displayName": "Line Color Palette"
                 }
             }
         },
