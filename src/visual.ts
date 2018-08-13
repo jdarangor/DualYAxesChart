@@ -35,31 +35,35 @@ module powerbi.extensibility.visual {
         minY2: number;
         maxY2: number;
         data: LineData;
+        backgroundColor: string;
+        marker: MarkerStyle;
         xAxis: AxisData;
         yAxis: AxisData;
         y2Axis: AxisData;
         showGridLines: boolean;
         isDateRange: boolean;
+        xAxisFormat: any;
         legendPos: string;
         legendRowHeight: number;
         colorPalette: number;
     };
 
     interface LineData {
-        DataColor?: string;
-        LineColor: string;
+        //DataColor?: string;
+        LineColor?: string;
         LineStyle: string;
     }
 
     interface AxisData {
         AxisTitle: string;
         TitleSize: number;
-        TitleFont?: string;
+        TitleFont: string;
         TitleColor: string;
         AxisLabelSize: number;
-        AxisLabelFont?: string;
+        AxisLabelFont: string;
         AxisLabelColor: string;
-        AxisFormat: any;
+        AxisLabelFormat: any;
+        Rotation?: number;
     }
     /**
         * Interface for Chart data points.
@@ -86,6 +90,11 @@ module powerbi.extensibility.visual {
         colors: string[];
     }
 
+    interface MarkerStyle{
+        MarkerSize: number;       
+    }
+
+
     /**
              * Function that converts queried data into a view model that will be used by the visual.
              *
@@ -105,6 +114,9 @@ module powerbi.extensibility.visual {
             maxY1: 0,
             minY2: 0,
             maxY2: 0,
+            xAxisFormat: null,
+            backgroundColor: null,
+            marker: null,
             data: null,
             xAxis: null,
             yAxis: null,
@@ -124,6 +136,13 @@ module powerbi.extensibility.visual {
             || !dataViews[0].categorical.values)
             return viewModel;
 
+
+        let defGridlineColor: string = '#c2c6c6';
+        let defAxisLabelColor: string = '#000000';
+        let defMeanLineColor: string = '#35BF4D';
+        let defSubgroupLineColor: string = '#00C3FF';
+        let defLimitLineColor: string = '#FFA500';
+
         let categorical = dataViews[0].categorical;
         let category = categorical.categories[0];
         let seriesDataPoints: ChartDataPoint[] = [];
@@ -135,49 +154,58 @@ module powerbi.extensibility.visual {
         var xAxisType: string = "NotUsable";
 
         try{
-        
-            if (category.source.type.dateTime.valueOf() == true || category.source.type.numeric.valueOf() == true) {
-                if (category.source.type.dateTime.valueOf() == true)
-                    xAxisType = "date";
-                else
-                    if(category.source.type.numeric.valueOf() == true)
-                        xAxisType = "numeric";
-            }
+            if (category.source.type.dateTime.valueOf() == true)
+                xAxisType = "date";
+            else
+                if(category.source.type.numeric.valueOf() == true)
+                    xAxisType = "numeric";
+                    
+            let dvobjs = dataViews[0].metadata.objects;
 
             if (xAxisType != "NotUsable") {
-                var xAxisFormat: any;
+               
+                var xAxisLabelFormat: any;
                 if (xAxisType == "date")
-                    xAxisFormat = getValue<string>(dvmobjs, 'xAxis', 'xAxisDateFormat', '%d-%b-%y');
+                    xAxisLabelFormat = getValue<string>(dvobjs, 'xAxis', 'xAxisDateFormat', '%d-%b-%y');
                 else
-                    xAxisFormat = getValue<string>(dvmobjs, 'xAxis', 'xAxisFormat', '.3s')
+                    xAxisLabelFormat = getValue<string>(dvobjs, 'xAxis', 'xAxisLabelFormat', '.3s')
 
-                let chartData: LineData = {
-                    LineColor: getFill(dataViews[0], 'chart', 'lineColor', '#0000FF'),
+                let chartData: LineData = {                   
                     LineStyle: getValue<string>(dvmobjs, 'chart', 'lineStyle', '')
                 };
                 let xAxisData: AxisData = {
-                    AxisTitle: getValue<string>(dvmobjs, 'xAxis', 'xAxisTitle', 'Default Value'),
-                    TitleColor: getFill(dataViews[0], 'xAxis', 'xAxisTitleColor', '#A9A9A9'),
-                    TitleSize: getValue<number>(dvmobjs, 'xAxis', 'xAxisTitleSize', 12),
-                    AxisLabelSize: getValue<number>(dvmobjs, 'xAxis', 'xAxisLabelSize', 12),
-                    AxisLabelColor: getFill(dataViews[0], 'xAxis', 'xAxisLabelColor', '#2F4F4F'),
-                    AxisFormat: xAxisFormat
+                    AxisTitle: getValue<string>(dvobjs, 'xAxis', 'xAxisTitle', 'Default Value'),
+                    TitleColor: getFill(dataViews[0], 'xAxis', 'xAxisTitleColor', defAxisLabelColor),
+                    TitleSize: getValue<number>(dvobjs, 'xAxis', 'xAxisTitleSize', 12),
+                    TitleFont: getValue<string>(dvobjs, 'xAxis', 'xAxisTitlefontFamily', 'Arial'),
+                    AxisLabelSize: getValue<number>(dvobjs, 'xAxis', 'xAxisLabelSize', 12),
+                    AxisLabelColor: getFill(dataViews[0], 'xAxis', 'xAxisLabelColor', defAxisLabelColor),
+                    AxisLabelFont: getValue<string>(dvobjs, 'xAxis', 'xAxisLabelfontFamily', 'Arial'),
+                    Rotation: getValue<number>(dvobjs, 'xAxis', 'xAxisLabelRotation', 0),
+                    AxisLabelFormat: xAxisLabelFormat
                 };
                 let yAxisData: AxisData = {
-                    AxisTitle: getValue<string>(dvmobjs, 'yAxis', 'yAxisTitle', 'Default Value'),
-                    TitleColor: getFill(dataViews[0], 'yAxis', 'yAxisTitleColor', '#A9A9A9'),
-                    TitleSize: getValue<number>(dvmobjs, 'yAxis', 'yAxisTitleSize', 12),
-                    AxisLabelSize: getValue<number>(dvmobjs, 'yAxis', 'yAxisLabelSize', 12),
-                    AxisLabelColor: getFill(dataViews[0], 'yAxis', 'yAxisLabelColor', '#2F4F4F'),
-                    AxisFormat: getValue<string>(dvmobjs, 'yAxis', 'yAxisFormat', '.3s')
+                    AxisTitle: getValue<string>(dvobjs, 'yAxis', 'yAxisTitle', 'Default Value'),
+                    TitleColor: getFill(dataViews[0], 'yAxis', 'yAxisTitleColor', defAxisLabelColor),
+                    TitleSize: getValue<number>(dvobjs, 'yAxis', 'yAxisTitleSize', 12),
+                    TitleFont: getValue<string>(dvobjs, 'yAxis', 'yAxisTitlefontFamily', 'Arial'),
+                    AxisLabelSize: getValue<number>(dvobjs, 'yAxis', 'yAxisLabelSize', 12),
+                    AxisLabelFont: getValue<string>(dvobjs, 'yAxis', 'yAxisLabelfontFamily', 'Arial'),
+                    AxisLabelColor: getFill(dataViews[0], 'yAxis', 'yAxisLabelColor', defAxisLabelColor),
+                    AxisLabelFormat: getValue<string>(dvobjs, 'yAxis', 'yAxisLabelFormat', '.3s')
                 };
+                let Marker: MarkerStyle = {
+                    MarkerSize: getValue<number>(dvobjs, 'chart', 'markerSize', 3),
+                }
                 let y2AxisData: AxisData = {
-                    AxisTitle: getValue<string>(dvmobjs, 'y2Axis', 'y2AxisTitle', 'Default Value'),
-                    TitleColor: getFill(dataViews[0], 'y2Axis', 'y2AxisTitleColor', '#A9A9A9'),
-                    TitleSize: getValue<number>(dvmobjs, 'y2Axis', 'y2AxisTitleSize', 12),
-                    AxisLabelSize: getValue<number>(dvmobjs, 'y2Axis', 'y2AxisLabelSize', 12),
-                    AxisLabelColor: getFill(dataViews[0], 'y2Axis', 'y2AxisLabelColor', '#2F4F4F'),
-                    AxisFormat: getValue<string>(dvmobjs, 'y2Axis', 'y2AxisFormat', '.3s')
+                    AxisTitle: getValue<string>(dvobjs, 'y2Axis', 'y2AxisTitle', 'Default Value'),
+                    TitleColor: getFill(dataViews[0], 'y2Axis', 'y2AxisTitleColor', defAxisLabelColor),
+                    TitleSize: getValue<number>(dvobjs, 'y2Axis', 'y2AxisTitleSize', 12),
+                    TitleFont: getValue<string>(dvobjs, 'y2Axis', 'y2AxisTitlefontFamily', 'Arial'),
+                    AxisLabelSize: getValue<number>(dvobjs, 'y2Axis', 'y2AxisLabelSize', 12),
+                    AxisLabelFont: getValue<string>(dvobjs, 'y2Axis', 'y2AxisLabelfontFamily', 'Arial'),
+                    AxisLabelColor: getFill(dataViews[0], 'y2Axis', 'y2AxisLabelColor', defAxisLabelColor),
+                    AxisLabelFormat: getValue<string>(dvobjs, 'y2Axis', 'y2AxisLabelFormat', '.3s')
                 };
                 let legendPos: string = getValue<string>(dvmobjs, 'chart', 'legendPosition', 'none');
                 var paletteId = getValue<number>(dvmobjs, 'yColorSelector', 'lineColor', 0);
@@ -236,11 +264,14 @@ module powerbi.extensibility.visual {
                     minY2: minY2,
                     maxY2: maxY2,
                     data: chartData,
+                    backgroundColor:  getFill(dataViews[0], 'chart', 'backgroundColor', '#FFFFFF'),
+                    marker: Marker,
                     xAxis: xAxisData,
                     yAxis: yAxisData,
                     y2Axis: y2AxisData,
                     showGridLines: getValue<boolean>(dataViews[0].metadata.objects, 'chart', 'showGridLines', true),
                     isDateRange: (xAxisType == "date"),
+                    xAxisFormat: xAxisLabelFormat,
                     legendPos: legendPos,
                     legendRowHeight: 14,
                     colorPalette: paletteId
@@ -307,10 +338,11 @@ module powerbi.extensibility.visual {
 
             if (this.DualYAxisChartViewModel && this.DualYAxisChartViewModel.dataPoints[0]) {
                 this.CreateAxes(options.viewport.width, options.viewport.height);
-                this.PlotData2(this.DualYAxisChartViewModel.dataPoints);
                 this.CreateBorder();
+                this.PlotData2(this.DualYAxisChartViewModel.dataPoints);
+                
                 this.CreateLegend();
-                this.DrawToolTip();
+              /*  this.DrawToolTip(); */
             }
         }
 
@@ -356,6 +388,17 @@ module powerbi.extensibility.visual {
             this.CreateY2Axis();
         }
 
+        private RotationTranslate(angle: number, label:any){
+            var radAngle: number = angle * Math.PI/180;
+            var sinAngle = Math.sin(radAngle);
+            var lenText: number = label.toString().length;
+            var textSize: number = this.DualYAxisChartViewModel.xAxis.AxisLabelSize;
+            var xOffset: number = textSize * sinAngle;
+            var yOffset: number = Math.abs(sinAngle) * lenText;
+            return xOffset + "," + yOffset;
+        }
+
+
         private CreateXAxis() {
             var plot = this.plot;
             this.svgGroupMain.attr({
@@ -367,44 +410,66 @@ module powerbi.extensibility.visual {
             let viewModel: DualYAxisChartViewModel = this.DualYAxisChartViewModel;
             let vmXaxis = viewModel.xAxis;
             this.GetMinMaxX();
+            this.GetMinMaxX();
             var xScale;
-            var dateFormat;
-
+            var xFormat;            
             if (viewModel.isDateRange) {
+                xFormat = d3.time.format(viewModel.xAxisFormat);
                 xScale = d3.time.scale()
                     .range([0, plot.width])
-                    .domain([viewModel.minX, viewModel.maxX]);
-                dateFormat = d3.time.format(vmXaxis.AxisFormat);
+                    .domain([viewModel.minX, viewModel.maxX])
+                    .nice();
             }
             else {
                 xScale = d3.scale.linear()
                     .range([0, plot.width])
-                    .domain([viewModel.minX, viewModel.maxX]);
-                dateFormat = d3.format(vmXaxis.AxisFormat);
-            }
+                    .domain([viewModel.minX, viewModel.maxX])
+                    .nice();
+                xFormat = d3.format(viewModel.xAxisFormat);                
+            }       
 
             this.xScale = xScale;
-            this.svgRoot.selectAll('.axis').remove();
+           // this.svgRoot.selectAll('.axis').remove();
             // draw x axis
             var xAxis = d3.svg.axis()
                 .scale(xScale)
                 .orient('bottom')
                 .tickPadding(8)
-                .tickFormat(dateFormat);
+                .tickFormat(xFormat);
+
+                var xAxis = d3.svg.axis()
+                .scale(xScale)
+                .orient('bottom')
+                //.tickFormat(xFormat);
+                .tickFormat(function (d) { return xFormat(d) });
 
             this.svgGroupMain
+                .append('g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate(0,' + plot.height + ')')
+                .call(xAxis)
+                .selectAll("text")
+                .attr("transform", "translate(" + this.RotationTranslate(vmXaxis.Rotation, function(d){return d.toString()}) + ")rotate(" + vmXaxis.Rotation + ")")// (180/ Math.PI) * Math.cos( Math.PI/180 * vmXaxis.Rotation)/2,0)})
+                .style("text-anchor", "middle")
+                .style('fill', vmXaxis.AxisLabelColor)
+                .style("font-size", vmXaxis.AxisLabelSize + 'px')
+                .style("font-family", vmXaxis.AxisLabelFont);
+         
+/* 
+           this.svgGroupMain
                 .append('g')
                 .attr('class', 'x axis')
                 .style('fill', vmXaxis.AxisLabelColor)
                 .attr('transform', 'translate(0,' + plot.height + ')')
                 .call(xAxis)
-                .style("font-size", vmXaxis.AxisLabelSize + 'px');
+                .style("font-size", vmXaxis.AxisLabelSize + 'px'); */
             this.svgGroupMain.append("text")
                 .attr("y", plot.height + plot.bottomAxisIndent / 2 + this.padding)
                 .attr("x", (plot.width / 2))
                 .style("text-anchor", "middle")
                 .style("font-size", vmXaxis.TitleSize + 'px')
-                .style("fill", vmXaxis.TitleColor)
+                .style("fill", vmXaxis.TitleColor) 
+                .style("font-family", vmXaxis.TitleFont)
                 .text(vmXaxis.AxisTitle);
         }
 
@@ -416,7 +481,7 @@ module powerbi.extensibility.visual {
                 .attr("height", plot.height)
                 .attr("width", plot.width)
                 .style("stroke", "grey")
-                .style("fill", "none")
+                .style("fill", this.DualYAxisChartViewModel.backgroundColor)
                 .style("stroke-width", 1);
         }
 
@@ -570,7 +635,7 @@ module powerbi.extensibility.visual {
 
         private CreateY1Axis() {
             let viewModel: DualYAxisChartViewModel = this.DualYAxisChartViewModel;
-            let vmXaxis = viewModel.xAxis;
+            //let vmXaxis = viewModel.xAxis;
             let vmYaxis = viewModel.yAxis;
             var y1Max: number = viewModel.maxY1;
             var y1Min: number = viewModel.minY1;
@@ -594,7 +659,7 @@ module powerbi.extensibility.visual {
             this.y1Scale = y1Scale;
             this.DualYAxisChartViewModel.minY1 = y1Min;
             this.DualYAxisChartViewModel.maxY1 = y1Max;
-            var y1formatValue = d3.format(vmYaxis.AxisFormat);
+            var y1formatValue = d3.format(vmYaxis.AxisLabelFormat);
             var y1Axis = d3.svg.axis()
                 .scale(y1Scale)
                 .orient('left')
@@ -607,6 +672,7 @@ module powerbi.extensibility.visual {
                 .attr('class', 'y1 axis')
                 .style('fill', vmYaxis.AxisLabelColor)
                 .style("font-size", vmYaxis.AxisLabelSize + 'px')
+                .style("font-family", vmYaxis.AxisLabelFont)
                 .call(y1Axis);
             this.svgGroupMain.append("text")
                 .attr("transform", "rotate(-90)")
@@ -616,7 +682,9 @@ module powerbi.extensibility.visual {
                 .style("text-anchor", "middle")
                 .style("font-size", vmYaxis.TitleSize + 'px')
                 .style("fill", vmYaxis.TitleColor)
+                .style("font-family", vmYaxis.TitleFont)
                 .text(vmYaxis.AxisTitle);
+                
         }
 
         private CreateY2Axis() {
@@ -646,7 +714,7 @@ module powerbi.extensibility.visual {
             this.y2Scale = y2Scale;
             this.DualYAxisChartViewModel.minY2 = y2Min;
             this.DualYAxisChartViewModel.maxY2 = y2Max;
-            var y2formatValue = d3.format(vmY2axis.AxisFormat);
+            var y2formatValue = d3.format(vmY2axis.AxisLabelFormat);
             var y2Axis = d3.svg.axis()
                 .scale(y2Scale)
                 .orient('right')
@@ -658,6 +726,7 @@ module powerbi.extensibility.visual {
                 .attr('transform', 'translate(' + plot.width + ',0)')
                 .style('fill', vmY2axis.AxisLabelColor)
                 .style("font-size", vmY2axis.AxisLabelSize + 'px')
+                .style("font-family", vmY2axis.AxisLabelFont)
                 .call(y2Axis);
             this.svgGroupMain.append("text")
                 .attr("x", (plot.height / 2))
@@ -666,6 +735,7 @@ module powerbi.extensibility.visual {
                 .style("text-anchor", "middle")
                 .style("font-size", vmY2axis.TitleSize + 'px')
                 .style("fill", vmY2axis.TitleColor)
+                .style("font-family", vmY2axis.TitleFont)
                 .text(vmY2axis.AxisTitle);
         }
 
@@ -718,21 +788,23 @@ module powerbi.extensibility.visual {
                     .enter().append("circle")
                     .style("fill", 'transparent')
                     .attr("r", 4)
+                    //.attr("r", viewModel.marker.MarkerSize)
                     .attr("cx", function (d) { return xScale(d['xValue']); })
                     .attr("cy", function (d) { return yScale(d['yValue']); });
-
+    
                 this.CreateToolTip(dots, series[k].seriesName, series[k].color);
+               
             }
-
         }
 
         private CreateToolTip(series: any, seriesName: string, color: string) {
             let viewModel = this.DualYAxisChartViewModel;
             var dateFormat;
+
             if (viewModel.isDateRange)
-                dateFormat = d3.time.format(viewModel.xAxis.AxisFormat);
+                dateFormat = d3.time.format(viewModel.xAxis.AxisLabelFormat);
             else
-                dateFormat = d3.format(viewModel.xAxis.AxisFormat);
+                dateFormat = d3.format(viewModel.xAxis.AxisLabelFormat);
 
             this.tooltipServiceWrapper.addTooltip(series,
                 (tooltipEvent: TooltipEventArgs<number>) => Visual.getTooltipData(tooltipEvent.data, color, seriesName, dateFormat),
@@ -740,7 +812,7 @@ module powerbi.extensibility.visual {
         }
 
         private static getTooltipData(value: any, datacolor: string, seriesName: string, xFormat: any): VisualTooltipDataItem[] {
-            return [{
+           return [{
                 header: xFormat(value['xValue']).toString(),
                 displayName: seriesName,
                 value: value['yValue'].toString(),
@@ -859,47 +931,72 @@ module powerbi.extensibility.visual {
                         objectName: objectName,
                         selector: null,
                         properties: {
-                            lineColor: viewModel.data.LineColor,
-                            lineStyle: viewModel.data.LineStyle,
-                            showGridLines: viewModel.showGridLines,
+                            backgroundColor: viewModel.backgroundColor,
+                            markerSize: viewModel.marker.MarkerSize,
+                            lineStyle: viewModel.data.LineStyle,                          
                             legendPosition: viewModel.legendPos
+                        },
+                        validValues: {
+                            markerSize: {
+                                numberRange: {
+                                    min: 1,
+                                    max: 20
+                                }
+                            }
                         }
                     };
                     instances.push(config);
                     break;
                 case 'xAxis':
-                    if (!viewModel.isDateRange) {
+                    var dateformat: string = "%d-%b-%y";
+                    var numericformat: string = ".3s";
+                    if(viewModel.isDateRange){
+                        dateformat = viewModel.xAxisFormat;                        
+                    }
+                    else{
+                        numericformat = viewModel.xAxisFormat;                        
+                    }
 
-                        var config: VisualObjectInstance = {
-                            objectName: objectName,
-                            selector: null,
-                            properties: {
-                                xAxisTitle: viewModel.xAxis.AxisTitle,
-                                xAxisTitleColor: viewModel.xAxis.TitleColor,
-                                xAxisTitleSize: viewModel.xAxis.TitleSize,
-                                xAxisLabelColor: viewModel.xAxis.AxisLabelColor,
-                                xAxisLabelSize: viewModel.xAxis.AxisLabelSize,
-                                xAxisFormat: viewModel.xAxis.AxisFormat,
+                    var config: VisualObjectInstance = {
+                        objectName: objectName,
+                        selector: null,
+                        properties: {
+                            xAxisTitle: viewModel.xAxis.AxisTitle,
+                            xAxisTitleColor: viewModel.xAxis.TitleColor,
+                            xAxisTitleSize: viewModel.xAxis.TitleSize,
+                            xAxisTitlefontFamily: viewModel.xAxis.TitleFont,
+                            xAxisLabelColor: viewModel.xAxis.AxisLabelColor,
+                            xAxisLabelSize: viewModel.xAxis.AxisLabelSize,
+                            xAxisLabelfontFamily: viewModel.xAxis.AxisLabelFont,                                
+                            xAxisLabelFormat: numericformat,
+                            xAxisDateFormat: dateformat,
+                            xAxisLabelRotation: viewModel.xAxis.Rotation
+                        },
+                        validValues: {
+                            xAxisTitleSize: {
+                                numberRange: {
+                                    min: 4,
+                                    max: 30
+                                }
+                            },
+                            xAxisLabelSize: {
+                                numberRange: {
+                                    min: 4,
+                                    max: 30
+                                }
+                            },
+                            xAxisLabelRotation: {
+                                numberRange:  {
+                                    min: 0,
+                                    max: 360
+                                }
                             }
-                        };
-                    }
-                    else {
-                        var config: VisualObjectInstance = {
-                            objectName: objectName,
-                            selector: null,
-                            properties: {
-                                xAxisTitle: viewModel.xAxis.AxisTitle,
-                                xAxisTitleColor: viewModel.xAxis.TitleColor,
-                                xAxisTitleSize: viewModel.xAxis.TitleSize,
-                                xAxisLabelColor: viewModel.xAxis.AxisLabelColor,
-                                xAxisLabelSize: viewModel.xAxis.AxisLabelSize,
-                                xAxisDateFormat: viewModel.xAxis.AxisFormat,
-                            }
-                        };
-                    }
+                        }
+                    };
                     instances.push(config);
                     break;
                 case 'yAxis':
+
                     var config: VisualObjectInstance = {
                         objectName: objectName,
                         selector: null,
@@ -907,46 +1004,60 @@ module powerbi.extensibility.visual {
                             yAxisTitle: viewModel.yAxis.AxisTitle,
                             yAxisTitleColor: viewModel.yAxis.TitleColor,
                             yAxisTitleSize: viewModel.yAxis.TitleSize,
+                            yAxisTitlefontFamily: viewModel.yAxis.TitleFont,
                             yAxisLabelColor: viewModel.yAxis.AxisLabelColor,
-                            yAxisLabelSize: viewModel.yAxis.AxisLabelSize,
-                            yAxisFormat: viewModel.yAxis.AxisFormat
-                        }
-                    };
-                    instances.push(config);
-                    break;
-                case 'y2Axis':
-                    var config: VisualObjectInstance = {
-                        objectName: objectName,
-                        selector: null,
-                        properties: {
-                            y2AxisTitle: viewModel.y2Axis.AxisTitle,
-                            y2AxisTitleColor: viewModel.y2Axis.TitleColor,
-                            y2AxisTitleSize: viewModel.y2Axis.TitleSize,
-                            y2AxisLabelColor: viewModel.y2Axis.AxisLabelColor,
-                            y2AxisLabelSize: viewModel.y2Axis.AxisLabelSize,
-                            y2AxisFormat: viewModel.y2Axis.AxisFormat
-                        }
-                    };
-                    instances.push(config);
-                    break;
-                case 'yColorSelector':
-                    var config: VisualObjectInstance = {
-                        objectName: objectName,
-                        selector: null,
-                        properties: {
-                            lineColor: viewModel.colorPalette,
+                            yAxisLabelSize: viewModel.yAxis.AxisLabelSize,                           
+                            yAxisLabelfontFamily: viewModel.yAxis.AxisLabelFont,
+                            yAxisLabelFormat: viewModel.yAxis.AxisLabelFormat
                         },
                         validValues: {
-                            lineColor: {
+                            yAxisTitleSize: {
                                 numberRange: {
-                                    min: 0,
-                                    max: this.colorPalettes.length - 1
+                                    min: 4,
+                                    max: 30
+                                }
+                            },
+                            yAxisLabelSize: {
+                                numberRange: {
+                                    min: 4,
+                                    max: 30
                                 }
                             }
                         }
-                    };
+                    }
                     instances.push(config);
                     break;
+                case 'y2Axis':
+                var config: VisualObjectInstance = {
+                    objectName: objectName,
+                    selector: null,
+                    properties: {
+                        y2AxisTitle: viewModel.y2Axis.AxisTitle,
+                        y2AxisTitleColor: viewModel.y2Axis.TitleColor,
+                        y2AxisTitleSize: viewModel.y2Axis.TitleSize,
+                        y2AxisTitlefontFamily: viewModel.y2Axis.TitleFont,
+                        y2AxisLabelColor: viewModel.y2Axis.AxisLabelColor,
+                        y2AxisLabelSize: viewModel.y2Axis.AxisLabelSize,                           
+                        y2AxisLabelfontFamily: viewModel.y2Axis.AxisLabelFont,
+                        y2AxisLabelFormat: viewModel.y2Axis.AxisLabelFormat
+                    },
+                    validValues: {
+                        y2AxisTitleSize: {
+                            numberRange: {
+                                min: 4,
+                                max: 30
+                            }
+                        },
+                        y2AxisLabelSize: {
+                            numberRange: {
+                                min: 4,
+                                max: 30
+                            }
+                        }
+                    }
+                }
+                instances.push(config);
+                break;
             }
             return instances;
         }
