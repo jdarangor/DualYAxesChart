@@ -353,7 +353,11 @@ module powerbi.extensibility.visual {
             var numLines = viewModel.dataPoints.length;
             var numLegendRows = Math.ceil(numLines / 5);
             var rowHeight = viewModel.legendRowHeight;
-
+          
+            var radAngle: number = viewModel.xAxis.Rotation * Math.PI/180;
+            var sinAngle = Math.sin(radAngle);
+            var yOffset: number = Math.abs(sinAngle) * (viewModel.xAxis.AxisLabelSize * 3); // 
+          
             switch (viewModel.legendPos) {
                 case 'top':
                     topAxisIndent = topAxisIndent + rowHeight * numLegendRows;
@@ -372,6 +376,9 @@ module powerbi.extensibility.visual {
                     y2AxisIndent = 150;
                     break;
             }
+
+            bottomAxisIndent = bottomAxisIndent + yOffset;
+
             var plot = {
                 y1AxisIndent: y1AxisIndent,
                 y2AxisIndent: y2AxisIndent,
@@ -392,7 +399,7 @@ module powerbi.extensibility.visual {
             var lenText: number = label.toString().length;
             var textSize: number = this.DualYAxisChartViewModel.xAxis.AxisLabelSize;
             var xOffset: number = textSize * sinAngle;
-            var yOffset: number = Math.abs(sinAngle) * lenText;
+            var yOffset: number = Math.abs(sinAngle) * (lenText) + xOffset/4;
             return xOffset + "," + yOffset;
         }
 
