@@ -195,7 +195,7 @@ module powerbi.extensibility.visual {
                     AxisLabelFormat: getValue<string>(dvobjs, 'yAxis', 'yAxisLabelFormat', '.3s')
                 };
                 let Marker: MarkerStyle = {
-                    MarkerSize: getValue<number>(dvobjs, 'chart', 'markerSize', 3),
+                    MarkerSize: getValue<number>(dvobjs, 'chart', 'markerSize', 2),
                 }
                 let y2AxisData: AxisData = {
                     AxisTitle: getValue<string>(dvobjs, 'y2Axis', 'y2AxisTitle', 'Default Value'),
@@ -264,7 +264,7 @@ module powerbi.extensibility.visual {
                     minY2: minY2,
                     maxY2: maxY2,
                     data: chartData,
-                    backgroundColor:  getFill(dataViews[0], 'chart', 'backgroundColor', '#FFFFFF'),
+                    backgroundColor: getFill(dataViews[0], 'chart', 'backgroundColor', '#FFFFFF'),
                     marker: Marker,
                     xAxis: xAxisData,
                     yAxis: yAxisData,
@@ -339,10 +339,8 @@ module powerbi.extensibility.visual {
             if (this.DualYAxisChartViewModel && this.DualYAxisChartViewModel.dataPoints[0]) {
                 this.CreateAxes(options.viewport.width, options.viewport.height);
                 this.CreateBorder();
-                this.PlotData2(this.DualYAxisChartViewModel.dataPoints);
-                
+                this.PlotData2(this.DualYAxisChartViewModel.dataPoints);                
                 this.CreateLegend();
-              /*  this.DrawToolTip(); */
             }
         }
 
@@ -455,14 +453,6 @@ module powerbi.extensibility.visual {
                 .style("font-size", vmXaxis.AxisLabelSize + 'px')
                 .style("font-family", vmXaxis.AxisLabelFont);
          
-/* 
-           this.svgGroupMain
-                .append('g')
-                .attr('class', 'x axis')
-                .style('fill', vmXaxis.AxisLabelColor)
-                .attr('transform', 'translate(0,' + plot.height + ')')
-                .call(xAxis)
-                .style("font-size", vmXaxis.AxisLabelSize + 'px'); */
             this.svgGroupMain.append("text")
                 .attr("y", plot.height + plot.bottomAxisIndent / 2 + this.padding)
                 .attr("x", (plot.width / 2))
@@ -635,7 +625,6 @@ module powerbi.extensibility.visual {
 
         private CreateY1Axis() {
             let viewModel: DualYAxisChartViewModel = this.DualYAxisChartViewModel;
-            //let vmXaxis = viewModel.xAxis;
             let vmYaxis = viewModel.yAxis;
             var y1Max: number = viewModel.maxY1;
             var y1Min: number = viewModel.minY1;
@@ -780,6 +769,7 @@ module powerbi.extensibility.visual {
                     .attr("d", d3line3(dp))
                     .attr("id", "tag" + k.toString())
                     .style("stroke-width", '1.5px')
+                    .style({"stroke-dasharray": (viewModel.data.LineStyle) })
                     .style("stroke", series[k].color)
                     .style("fill", 'none');
 
@@ -841,83 +831,6 @@ module powerbi.extensibility.visual {
             p = { name: "pastel2", colors: ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9'] };
             palettes.push(p);
             this.colorPalettes = palettes;
-        }
-
-        private DrawToolTip() {
-            let viewModel: DualYAxisChartViewModel = this.DualYAxisChartViewModel;
-            //     let crossHairLine = viewModel.crossHairLine;
-            var xScale = this.xScale;
-
-            //add focus lines and circle
-            var plot = this.plot;
-            var point = [];
-            for (let i = 0; i < viewModel.dataPoints.length; i++) {
-                var ob = viewModel.dataPoints[i];
-                //  var dtDate: any = new Date(ob.xValue);
-                var x = ob.AxisData[0].xValue[i];
-                //var y = ob.AxisData[0].yValue[i];
-                //creating line points                         
-                point.push([x]);
-            }
-
-
-            var focus = this.svgGroupMain.append("g")
-                .style("display", "none");
-            focus.append("circle")
-                .attr("class", "y")
-                .style("fill", "none")
-                .style("stroke", "red")
-                .attr("id", "focuscircle")
-                .attr("r", 4);
-            focus.append('line')
-                .attr('id', 'focusLineX')
-                .attr('class', 'focusLine');
-           /* focus.append('line')
-                .attr('id', 'focusLineY')
-                .attr('class', 'focusLine');
-            focus.append("text")
-                .attr('id', 'labelText')
-                .attr("x", 9)
-                .attr("dy", ".35em");
-            focus.append("text")
-                .attr('id', 'yAxisText')
-                .attr("dy", ".35em");*/
-            focus.append("text")
-                .attr('id', 'xAxisText')
-                .attr("dx", ".15em");
-            // append the rectangle to capture mouse
-            this.svgGroupMain.append("rect")
-                .attr("width", plot.width)
-                .attr("height", plot.height)
-                .style("fill", "none")
-                .style("pointer-events", "all")
-                .on("mouseover", function () { focus.style("display", "null"); })
-                .on("mouseout", function () { focus.style("display", "none"); })
-                .on("mousemove", mousemove);
-            var bisectDate = d3.bisector(function (d) { return d[0]; }).left;
-
-            function mousemove() {
-                //alert(d3.mouse(this)[1].toString());      
-                var x0 = xScale.invert(d3.mouse(this)[0]);
-            /*    var i = bisectDate(point, x0)
-                var d0 = point[i - 1];
-                var d1 = point[i];
-                var d = x0 - d0[0] > d1[0] - x0 ? d1 : d0;*/
-                var x = 10;// xScale(40);
-                var y = 200;//y1Scale(d[1]);
-                /*focus.select('#focuscircle')
-                    .attr('cx', 0) 
-                    .attr('cy', 1000);*/
-            
-                var yDomain = ([viewModel.minY1, viewModel.maxY1]);
-                var yScale2 = d3.scale.linear().range([plot.height, 0]).domain(yDomain);
-
-               focus.select('#focusLineX')
-                            .attr('x1', x).attr('y1', yScale2(yDomain[0]))
-                            .attr('x2', x).attr('y2', yScale2(yDomain[1]))
-                            .style("stroke", 'red');
-               
-            }
         }
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] {
