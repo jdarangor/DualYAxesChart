@@ -66,7 +66,7 @@
         "chart": {
             "displayName": "Chart",
             "properties": {
-                "lineColor": {
+                "backgroundColor": {
                     "type": {
                         "fill": {
                             "solid": {
@@ -74,7 +74,14 @@
                             }
                         }
                     },
-                    "displayName": "Line Color"
+                    "displayName": "Plot Area Backgound"
+                },
+                "markerSize": {
+                    "type": {
+                        "integer": true
+                    },
+                    "displayName": "Marker Size",
+                    "description": "Select marker size"
                 },
                 "lineStyle": {
                     "type": {
@@ -112,13 +119,7 @@
                     "displayName": "Line Style",
                     "description": "Select line style"
                 },
-                "showGridLines": {
-                    "type": {
-                        "bool": true
-                    },
-                    "displayName": "Show Grid Lines",
-                    "description": "Make grid lines visible"
-                },
+                
                 "legendPosition": {
                     "type": {
                         "enumeration": [
@@ -174,9 +175,113 @@
                 },
                 "xAxisTitleSize": {
                     "type": {
-                        "numeric": true
+                        "integer": true
                     },
                     "displayName": "Title Size"
+                },
+                "xAxisTitlefontFamily": {
+                    "displayName": "Title Font",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Default",
+                                "description": "helvetica, arial, sans-serif",
+                                "value": "helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Arial",
+                                "value": "Arial"
+                            },
+                            {
+                                "displayName": "Arial Black",
+                                "value": "\"Arial Black\""
+                            },
+                            {
+                                "displayName": "Arial Unicode MS",
+                                "value": "\"Arial Unicode MS\""
+                            },
+                            {
+                                "displayName": "Calibri",
+                                "value": "Calibri"
+                            },
+                            {
+                                "displayName": "Cambria",
+                                "value": "Cambria"
+                            },
+                            {
+                                "displayName": "Cambria Math",
+                                "value": "\"Cambria Math\""
+                            },
+                            {
+                                "displayName": "Candara",
+                                "value": "Candara"
+                            },
+                            {
+                                "displayName": "Comic Sans MS",
+                                "value": "\"Comic Sans MS\""
+                            },
+                            {
+                                "displayName": "Consolas",
+                                "value": "Consolas"
+                            },
+                            {
+                                "displayName": "Constantia",
+                                "value": "Constantia"
+                            },
+                            {
+                                "displayName": "Corbel",
+                                "value": "Corbel"
+                            },
+                            {
+                                "displayName": "Courier New",
+                                "value": "\"Courier New\""
+                            },
+                            {
+                                "displayName": "Georgia",
+                                "value": "Georgia"
+                            },
+                            {
+                                "displayName": "Lucida Sans Unicode",
+                                "value": "\"Lucida Sans Unicode\""
+                            },
+                            {
+                                "displayName": "Segoe (Bold)",
+                                "value": "\"Segoe UI Bold\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI",
+                                "value": "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI Light",
+                                "value": "\"Segoe UI Light\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Symbol",
+                                "value": "Symbol"
+                            },
+                            {
+                                "displayName": "Tahoma",
+                                "value": "Tahoma"
+                            },
+                            {
+                                "displayName": "Times New Roman",
+                                "value": "\"Times New Roman\""
+                            },
+                            {
+                                "displayName": "Trebuchet MS",
+                                "value": "\"Trebuchet MS\""
+                            },
+                            {
+                                "displayName": "Verdana",
+                                "value": "Verdana"
+                            },
+                            {
+                                "displayName": "Wingdings",
+                                "value": "Wingdings"
+                            }
+                        ]
+                    }
                 },
                 "xAxisLabelColor": {
                     "type": {
@@ -186,210 +291,119 @@
                             }
                         }
                     },
-                    "displayName": "Axis Label Color"
+                    "displayName": "Label Color"
                 },
                 "xAxisLabelSize": {
                     "type": {
-                        "numeric": true
+                        "integer": true
                     },
-                    "displayName": "Axis Label Size"
-                },
-                "xAxisFormat": {
+                    "displayName": "Label Size"
+                },                
+                "xAxisLabelfontFamily": {
+                    "displayName": "Labels Font",
                     "type": {
                         "enumeration": [
                             {
-                                "displayName": "0",
-                                "value": ".1s"
+                                "displayName": "Default",
+                                "description": "helvetica, arial, sans-serif",
+                                "value": "helvetica, arial, sans-serif"
                             },
                             {
-                                "displayName": "00",
-                                "value": ".2s"
+                                "displayName": "Arial",
+                                "value": "Arial"
                             },
                             {
-                                "displayName": "000",
-                                "value": ".3s"
+                                "displayName": "Arial Black",
+                                "value": "\"Arial Black\""
                             },
                             {
-                                "displayName": "0000",
-                                "value": ".4s"
+                                "displayName": "Arial Unicode MS",
+                                "value": "\"Arial Unicode MS\""
                             },
                             {
-                                "displayName": "00000",
-                                "value": ".5s"
+                                "displayName": "Calibri",
+                                "value": "Calibri"
                             },
                             {
-                                "displayName": "000000",
-                                "value": ".6s"
+                                "displayName": "Cambria",
+                                "value": "Cambria"
+                            },
+                            {
+                                "displayName": "Cambria Math",
+                                "value": "\"Cambria Math\""
+                            },
+                            {
+                                "displayName": "Candara",
+                                "value": "Candara"
+                            },
+                            {
+                                "displayName": "Comic Sans MS",
+                                "value": "\"Comic Sans MS\""
+                            },
+                            {
+                                "displayName": "Consolas",
+                                "value": "Consolas"
+                            },
+                            {
+                                "displayName": "Constantia",
+                                "value": "Constantia"
+                            },
+                            {
+                                "displayName": "Corbel",
+                                "value": "Corbel"
+                            },
+                            {
+                                "displayName": "Courier New",
+                                "value": "\"Courier New\""
+                            },
+                            {
+                                "displayName": "Georgia",
+                                "value": "Georgia"
+                            },
+                            {
+                                "displayName": "Lucida Sans Unicode",
+                                "value": "\"Lucida Sans Unicode\""
+                            },
+                            {
+                                "displayName": "Segoe (Bold)",
+                                "value": "\"Segoe UI Bold\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI",
+                                "value": "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI Light",
+                                "value": "\"Segoe UI Light\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Symbol",
+                                "value": "Symbol"
+                            },
+                            {
+                                "displayName": "Tahoma",
+                                "value": "Tahoma"
+                            },
+                            {
+                                "displayName": "Times New Roman",
+                                "value": "\"Times New Roman\""
+                            },
+                            {
+                                "displayName": "Trebuchet MS",
+                                "value": "\"Trebuchet MS\""
+                            },
+                            {
+                                "displayName": "Verdana",
+                                "value": "Verdana"
+                            },
+                            {
+                                "displayName": "Wingdings",
+                                "value": "Wingdings"
                             }
                         ]
-                    },
-                    "displayName": "Axis Label Format",
-                    "description": "Select format for X Axis Labels"
+                    }
                 },
-                "xAxisDateFormat": {
-                    "type": {
-                        "enumeration": [
-                            {
-                                "displayName": "Day (as number)",
-                                "value": "%d"
-                            },
-                            {
-                                "displayName": "Abbreviated Weekday Name",
-                                "value": "%a"
-                            },
-                            {
-                                "displayName": "Full Weekday Name",
-                                "value": "%A"
-                            },
-                            {
-                                "displayName": "Weekday as number",
-                                "value": "%w"
-                            },
-                            {
-                                "displayName": "d-m",
-                                "value": "%-d-%-b"
-                            },
-                            {
-                                "displayName": "d-m-yy",
-                                "value": "%-d-%-b-%y"
-                            },
-                            {
-                                "displayName": "d-m-yy hh:mm",
-                                "value": "%-d-%-b-%y %H:%M"
-                            },
-                            {
-                                "displayName": "dd-mm",
-                                "value": "%d-%b"
-                            },
-                            {
-                                "displayName": "dd-mm-yy",
-                                "value": "%d-%b-%y"
-                            },
-                            {
-                                "displayName": "dd-mm-yy hh:mm",
-                                "value": "%d-%b-%y %H:%M"
-                            },
-                            {
-                                "displayName": "Abbreviated Month Name",
-                                "value": "%b"
-                            },
-                            {
-                                "displayName": "Full Month Name",
-                                "value": "%B"
-                            },
-                            {
-                                "displayName": "Month as number",
-                                "value": "%-m"
-                            },
-                            {
-                                "displayName": "Month as padded number",
-                                "value": "%m"
-                            },
-                            {
-                                "displayName": "m-d",
-                                "value": "%-b-%-d"
-                            },
-                            {
-                                "displayName": "m-yy",
-                                "value": "%-b-%y"
-                            },
-                            {
-                                "displayName": "m-d-yy",
-                                "value": "%-b-%-d-%y"
-                            },
-                            {
-                                "displayName": "mm-dd",
-                                "value": "%b-%d"
-                            },
-                            {
-                                "displayName": "mm-yy",
-                                "value": "%b-%y"
-                            },
-                            {
-                                "displayName": "mm-dd-yy",
-                                "value": "%b-%d-%y"
-                            },
-                            {
-                                "displayName": "mm-dd-yy hh:mm",
-                                "value": "%b-%d-%y %H:%M"
-                            },
-                            {
-                                "displayName": "Year (without century)",
-                                "value": "%y"
-                            },
-                            {
-                                "displayName": "Year (with century)",
-                                "value": "%Y"
-                            },
-                            {
-                                "displayName": "Hours",
-                                "value": "%H"
-                            },
-                            {
-                                "displayName": "Minutes",
-                                "value": "%M"
-                            },
-                            {
-                                "displayName": "Date as m/d/Y",
-                                "value": "%x"
-                            },
-                            {
-                                "displayName": "Week Number of Year (From Sunday)",
-                                "value": "%U"
-                            },
-                            {
-                                "displayName": "Week Number of Year (From Monday)",
-                                "value": "%W"
-                            }
-                        ]
-                    },
-                    "displayName": "Axis Label Format",
-                    "description": "Select format for X Axis Labels"
-                }
-            }
-        },
-        "yAxis": {
-            "displayName": "Y Axis",
-            "properties": {
-                "yAxisTitle": {
-                    "type": {
-                        "text": true
-                    },
-                    "displayName": "Title"
-                },
-                "yAxisTitleColor": {
-                    "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
-                    },
-                    "displayName": "Title Color"
-                },
-                "yAxisTitleSize": {
-                    "type": {
-                        "numeric": true
-                    },
-                    "displayName": "Title Size"
-                },
-                "yAxisLabelColor": {
-                    "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
-                    },
-                    "displayName": "Axis Label Color"
-                },
-                "yAxisLabelSize": {
-                    "type": {
-                        "numeric": true
-                    },
-                    "displayName": "Axis Label Size"
-                },
-                "yAxisFormat": {
+                "xAxisLabelFormat": {
                     "type": {
                         "enumeration": [
                             {
@@ -442,7 +456,441 @@
                             }
                         ]
                     },
-                    "displayName": "Axis Label Format",
+                    "displayName": "Label Numeric Format",
+                    "description": "Select numeric format for X Axis Labels"
+                },                               
+                "xAxisDateFormat": {
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Day (as number)",
+                                "value": "%d"
+                            },
+                            {
+                                "displayName": "Abbreviated Weekday Name",
+                                "value": "%a"
+                            },
+                            {
+                                "displayName": "Full Weekday Name",
+                                "value": "%A"
+                            },
+                            {
+                                "displayName": "Weekday as number",
+                                "value": "%w"
+                            },
+                            {
+                                "displayName": "d-Mmm",
+                                "value": "%-d-%-b"
+                            },
+                            {
+                                "displayName": "d-Mmm-yy",
+                                "value": "%-d-%-b-%y"
+                            },
+                            {
+                                "displayName": "d-Mmm-yy hh:mm",
+                                "value": "%-d-%-b-%y %H:%M"
+                            },
+                            {
+                                "displayName": "dd-Mmm",
+                                "value": "%d-%b"
+                            },
+                            {
+                                "displayName": "dd-Mmm-yy",
+                                "value": "%d-%b-%y"
+                            },
+                            {
+                                "displayName": "dd-Mmm-yy hh:mm",
+                                "value": "%d-%b-%y %H:%M"
+                            },
+                            {
+                                "displayName": "Abbreviated Month Name",
+                                "value": "%b"
+                            },
+                            {
+                                "displayName": "Full Month Name",
+                                "value": "%B"
+                            },
+                            {
+                                "displayName": "Month as number",
+                                "value": "%-m"
+                            },
+                            {
+                                "displayName": "Month as zero padded number",
+                                "value": "%m"
+                            },
+                            {
+                                "displayName": "Mmm-d",
+                                "value": "%-b-%-d"
+                            },
+                            {
+                                "displayName": "Mmm-yy",
+                                "value": "%-b-%y"
+                            },
+                            {
+                                "displayName": "Mmm-d-yy",
+                                "value": "%-b-%-d-%y"
+                            },
+                            {
+                                "displayName": "Mmm-dd",
+                                "value": "%b-%d"
+                            },
+                            {
+                                "displayName": "Mmm-yy",
+                                "value": "%b-%y"
+                            },
+                            {
+                                "displayName": "Mmm-dd-yy",
+                                "value": "%b-%d-%y"
+                            },
+                            {
+                                "displayName": "Mmm-dd-yy hh:mm",
+                                "value": "%b-%d-%y %H:%M"
+                            },
+                            {
+                                "displayName": "Year (without century)",
+                                "value": "%y"
+                            },
+                            {
+                                "displayName": "Year (with century)",
+                                "value": "%Y"
+                            },
+                            {
+                                "displayName": "Hours",
+                                "value": "%H"
+                            },
+                            {
+                                "displayName": "Minutes",
+                                "value": "%M"
+                            },
+                            {
+                                "displayName": "Date as mm/dd/yyyy",
+                                "value": "%x"
+                            },
+                            {
+                                "displayName": "Week Number of Year (From Sunday)",
+                                "value": "%U"
+                            },
+                            {
+                                "displayName": "Week Number of Year (From Monday)",
+                                "value": "%W"
+                            }
+                        ]
+                    },
+                    "displayName": "Label Date Format",
+                    "description": "Select Date format for X Axis Labels"
+                },
+                "xAxisLabelRotation": {
+                    "type": {
+                        "integer": true
+                    },
+                    "displayName": "Label Rotation Angle",
+                    "description": "Angle of Rotation for X-Axis labels"
+                }
+            }
+        },
+        "yAxis": {
+            "displayName": "Y1 Axis",
+            "properties": {
+                "yAxisTitle": {
+                    "type": {
+                        "text": true
+                    },
+                    "displayName": "Title"
+                },
+                "yAxisTitleColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Title Color"
+                },
+                "yAxisTitleSize": {
+                    "type": {
+                        "integer": true
+                    },
+                    "displayName": "Title Size"
+                },
+                "yAxisTitlefontFamily": {
+                    "displayName": "Title Font",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Default",
+                                "description": "helvetica, arial, sans-serif",
+                                "value": "helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Arial",
+                                "value": "Arial"
+                            },
+                            {
+                                "displayName": "Arial Black",
+                                "value": "\"Arial Black\""
+                            },
+                            {
+                                "displayName": "Arial Unicode MS",
+                                "value": "\"Arial Unicode MS\""
+                            },
+                            {
+                                "displayName": "Calibri",
+                                "value": "Calibri"
+                            },
+                            {
+                                "displayName": "Cambria",
+                                "value": "Cambria"
+                            },
+                            {
+                                "displayName": "Cambria Math",
+                                "value": "\"Cambria Math\""
+                            },
+                            {
+                                "displayName": "Candara",
+                                "value": "Candara"
+                            },
+                            {
+                                "displayName": "Comic Sans MS",
+                                "value": "\"Comic Sans MS\""
+                            },
+                            {
+                                "displayName": "Consolas",
+                                "value": "Consolas"
+                            },
+                            {
+                                "displayName": "Constantia",
+                                "value": "Constantia"
+                            },
+                            {
+                                "displayName": "Corbel",
+                                "value": "Corbel"
+                            },
+                            {
+                                "displayName": "Courier New",
+                                "value": "\"Courier New\""
+                            },
+                            {
+                                "displayName": "Georgia",
+                                "value": "Georgia"
+                            },
+                            {
+                                "displayName": "Lucida Sans Unicode",
+                                "value": "\"Lucida Sans Unicode\""
+                            },
+                            {
+                                "displayName": "Segoe (Bold)",
+                                "value": "\"Segoe UI Bold\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI",
+                                "value": "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI Light",
+                                "value": "\"Segoe UI Light\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Symbol",
+                                "value": "Symbol"
+                            },
+                            {
+                                "displayName": "Tahoma",
+                                "value": "Tahoma"
+                            },
+                            {
+                                "displayName": "Times New Roman",
+                                "value": "\"Times New Roman\""
+                            },
+                            {
+                                "displayName": "Trebuchet MS",
+                                "value": "\"Trebuchet MS\""
+                            },
+                            {
+                                "displayName": "Verdana",
+                                "value": "Verdana"
+                            },
+                            {
+                                "displayName": "Wingdings",
+                                "value": "Wingdings"
+                            }
+                        ]
+                    }
+                },
+                "yAxisLabelColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Label Color"
+                },
+                "yAxisLabelSize": {
+                    "type": {
+                        "integer": true
+                    },
+                    "displayName": "Label Size"
+                },
+                "yAxisLabelfontFamily": {
+                    "displayName": "Labels Font",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Default",
+                                "description": "helvetica, arial, sans-serif",
+                                "value": "helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Arial",
+                                "value": "Arial"
+                            },
+                            {
+                                "displayName": "Arial Black",
+                                "value": "\"Arial Black\""
+                            },
+                            {
+                                "displayName": "Arial Unicode MS",
+                                "value": "\"Arial Unicode MS\""
+                            },
+                            {
+                                "displayName": "Calibri",
+                                "value": "Calibri"
+                            },
+                            {
+                                "displayName": "Cambria",
+                                "value": "Cambria"
+                            },
+                            {
+                                "displayName": "Cambria Math",
+                                "value": "\"Cambria Math\""
+                            },
+                            {
+                                "displayName": "Candara",
+                                "value": "Candara"
+                            },
+                            {
+                                "displayName": "Comic Sans MS",
+                                "value": "\"Comic Sans MS\""
+                            },
+                            {
+                                "displayName": "Consolas",
+                                "value": "Consolas"
+                            },
+                            {
+                                "displayName": "Constantia",
+                                "value": "Constantia"
+                            },
+                            {
+                                "displayName": "Corbel",
+                                "value": "Corbel"
+                            },
+                            {
+                                "displayName": "Courier New",
+                                "value": "\"Courier New\""
+                            },
+                            {
+                                "displayName": "Georgia",
+                                "value": "Georgia"
+                            },
+                            {
+                                "displayName": "Lucida Sans Unicode",
+                                "value": "\"Lucida Sans Unicode\""
+                            },
+                            {
+                                "displayName": "Segoe (Bold)",
+                                "value": "\"Segoe UI Bold\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI",
+                                "value": "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI Light",
+                                "value": "\"Segoe UI Light\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Symbol",
+                                "value": "Symbol"
+                            },
+                            {
+                                "displayName": "Tahoma",
+                                "value": "Tahoma"
+                            },
+                            {
+                                "displayName": "Times New Roman",
+                                "value": "\"Times New Roman\""
+                            },
+                            {
+                                "displayName": "Trebuchet MS",
+                                "value": "\"Trebuchet MS\""
+                            },
+                            {
+                                "displayName": "Verdana",
+                                "value": "Verdana"
+                            },
+                            {
+                                "displayName": "Wingdings",
+                                "value": "Wingdings"
+                            }
+                        ]
+                    }
+                },                
+                "yAxisLabelFormat": {
+                    "type": {
+                        "enumeration": [                            
+                            {
+                                "displayName": "All",
+                                "value": "s"
+                            },
+                            {
+                                "displayName": "0",
+                                "value": ".1s"
+                            },
+                            {
+                                "displayName": "00",
+                                "value": ".2s"
+                            },
+                            {
+                                "displayName": "000",
+                                "value": ".3s"
+                            },
+                            {
+                                "displayName": "0000",
+                                "value": ".4s"
+                            },
+                            {
+                                "displayName": "00000",
+                                "value": ".5s"
+                            },
+                            {
+                                "displayName": "000000",
+                                "value": ".6s"
+                            },
+                            {
+                                "displayName": "All %",
+                                "value": "%"
+                            },
+                            {
+                                "displayName": "% - no decimals",
+                                "value": ".0%"
+                            },
+                            {
+                                "displayName": "% - 1 decimal",
+                                "value": ".1%"
+                            },
+                            {
+                                "displayName": "% - 2 decimals",
+                                "value": ".2%"
+                            },
+                            {
+                                "displayName": "% - 3 decimals",
+                                "value": ".3%"
+                            }
+                        ]
+                    },
+                    "displayName": "Label Format",
                     "description": "Select format for Y Axis Labels"
                 }
             }
@@ -468,9 +916,113 @@
                 },
                 "y2AxisTitleSize": {
                     "type": {
-                        "numeric": true
+                        "integer": true
                     },
                     "displayName": "Title Size"
+                },
+                "y2AxisTitlefontFamily": {
+                    "displayName": "Title Font",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Default",
+                                "description": "helvetica, arial, sans-serif",
+                                "value": "helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Arial",
+                                "value": "Arial"
+                            },
+                            {
+                                "displayName": "Arial Black",
+                                "value": "\"Arial Black\""
+                            },
+                            {
+                                "displayName": "Arial Unicode MS",
+                                "value": "\"Arial Unicode MS\""
+                            },
+                            {
+                                "displayName": "Calibri",
+                                "value": "Calibri"
+                            },
+                            {
+                                "displayName": "Cambria",
+                                "value": "Cambria"
+                            },
+                            {
+                                "displayName": "Cambria Math",
+                                "value": "\"Cambria Math\""
+                            },
+                            {
+                                "displayName": "Candara",
+                                "value": "Candara"
+                            },
+                            {
+                                "displayName": "Comic Sans MS",
+                                "value": "\"Comic Sans MS\""
+                            },
+                            {
+                                "displayName": "Consolas",
+                                "value": "Consolas"
+                            },
+                            {
+                                "displayName": "Constantia",
+                                "value": "Constantia"
+                            },
+                            {
+                                "displayName": "Corbel",
+                                "value": "Corbel"
+                            },
+                            {
+                                "displayName": "Courier New",
+                                "value": "\"Courier New\""
+                            },
+                            {
+                                "displayName": "Georgia",
+                                "value": "Georgia"
+                            },
+                            {
+                                "displayName": "Lucida Sans Unicode",
+                                "value": "\"Lucida Sans Unicode\""
+                            },
+                            {
+                                "displayName": "Segoe (Bold)",
+                                "value": "\"Segoe UI Bold\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI",
+                                "value": "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI Light",
+                                "value": "\"Segoe UI Light\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Symbol",
+                                "value": "Symbol"
+                            },
+                            {
+                                "displayName": "Tahoma",
+                                "value": "Tahoma"
+                            },
+                            {
+                                "displayName": "Times New Roman",
+                                "value": "\"Times New Roman\""
+                            },
+                            {
+                                "displayName": "Trebuchet MS",
+                                "value": "\"Trebuchet MS\""
+                            },
+                            {
+                                "displayName": "Verdana",
+                                "value": "Verdana"
+                            },
+                            {
+                                "displayName": "Wingdings",
+                                "value": "Wingdings"
+                            }
+                        ]
+                    }
                 },
                 "y2AxisLabelColor": {
                     "type": {
@@ -480,17 +1032,121 @@
                             }
                         }
                     },
-                    "displayName": "Axis Label Color"
+                    "displayName": "Label Color"
                 },
                 "y2AxisLabelSize": {
                     "type": {
-                        "numeric": true
+                        "integer": true
                     },
-                    "displayName": "Axis Label Size"
+                    "displayName": "Label Size"
                 },
-                "y2AxisFormat": {
+                "y2AxisLabelfontFamily": {
+                    "displayName": "Labels Font",
                     "type": {
                         "enumeration": [
+                            {
+                                "displayName": "Default",
+                                "description": "helvetica, arial, sans-serif",
+                                "value": "helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Arial",
+                                "value": "Arial"
+                            },
+                            {
+                                "displayName": "Arial Black",
+                                "value": "\"Arial Black\""
+                            },
+                            {
+                                "displayName": "Arial Unicode MS",
+                                "value": "\"Arial Unicode MS\""
+                            },
+                            {
+                                "displayName": "Calibri",
+                                "value": "Calibri"
+                            },
+                            {
+                                "displayName": "Cambria",
+                                "value": "Cambria"
+                            },
+                            {
+                                "displayName": "Cambria Math",
+                                "value": "\"Cambria Math\""
+                            },
+                            {
+                                "displayName": "Candara",
+                                "value": "Candara"
+                            },
+                            {
+                                "displayName": "Comic Sans MS",
+                                "value": "\"Comic Sans MS\""
+                            },
+                            {
+                                "displayName": "Consolas",
+                                "value": "Consolas"
+                            },
+                            {
+                                "displayName": "Constantia",
+                                "value": "Constantia"
+                            },
+                            {
+                                "displayName": "Corbel",
+                                "value": "Corbel"
+                            },
+                            {
+                                "displayName": "Courier New",
+                                "value": "\"Courier New\""
+                            },
+                            {
+                                "displayName": "Georgia",
+                                "value": "Georgia"
+                            },
+                            {
+                                "displayName": "Lucida Sans Unicode",
+                                "value": "\"Lucida Sans Unicode\""
+                            },
+                            {
+                                "displayName": "Segoe (Bold)",
+                                "value": "\"Segoe UI Bold\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI",
+                                "value": "\"Segoe UI\", wf_segoe-ui_normal, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI Light",
+                                "value": "\"Segoe UI Light\", wf_segoe-ui_bold, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Symbol",
+                                "value": "Symbol"
+                            },
+                            {
+                                "displayName": "Tahoma",
+                                "value": "Tahoma"
+                            },
+                            {
+                                "displayName": "Times New Roman",
+                                "value": "\"Times New Roman\""
+                            },
+                            {
+                                "displayName": "Trebuchet MS",
+                                "value": "\"Trebuchet MS\""
+                            },
+                            {
+                                "displayName": "Verdana",
+                                "value": "Verdana"
+                            },
+                            {
+                                "displayName": "Wingdings",
+                                "value": "Wingdings"
+                            }
+                        ]
+                    }
+                },                
+                "y2AxisLabelFormat": {
+                    "type": {
+                        "enumeration": [                            
                             {
                                 "displayName": "All",
                                 "value": "s"
@@ -541,32 +1197,8 @@
                             }
                         ]
                     },
-                    "displayName": "Axis Label Format",
+                    "displayName": "Label Format",
                     "description": "Select format for Y2 Axis Labels"
-                }
-            }
-        },
-        "yColorSelector": {
-            "displayName": "Color Palette",
-            "properties": {
-                "lineColor": {
-                    "type": {
-                        "integer": true
-                    },
-                    "displayName": "Palette"
-                }
-            }
-        },
-        "test": {
-            "displayName": "test",
-            "properties": {
-                "testData": {
-                    "type": {
-                        "enumeration": [
-                            
-                        ]
-                    },
-                    "displayName": "test"
                 }
             }
         }
