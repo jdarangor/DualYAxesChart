@@ -208,7 +208,7 @@ module powerbi.extensibility.visual {
                     AxisLabelFormat: getValue<string>(dvobjs, 'y2Axis', 'y2AxisLabelFormat', '.3s')
                 };
                 let legendPos: string = getValue<string>(dvmobjs, 'chart', 'legendPosition', 'none');
-                var paletteId = getValue<number>(dvmobjs, 'yColorSelector', 'lineColor', 0);
+                var paletteId = getValue<number>(dvmobjs, 'chart', 'ColorPalette', 0);
                 var c = cp[paletteId].colors;
 
                 for (let k = 0; k < categorical.values.length; k++) {  //1,2..
@@ -847,13 +847,20 @@ module powerbi.extensibility.visual {
                             backgroundColor: viewModel.backgroundColor,
                             markerSize: viewModel.marker.MarkerSize,
                             lineStyle: viewModel.data.LineStyle,                          
-                            legendPosition: viewModel.legendPos
+                            legendPosition: viewModel.legendPos,
+                            ColorPalette: viewModel.colorPalette
                         },
                         validValues: {
                             markerSize: {
                                 numberRange: {
                                     min: 1,
                                     max: 20
+                                }
+                            },
+                            ColorPalette: {
+                                numberRange: {
+                                    min: 0,
+                                    max: 3
                                 }
                             }
                         }
