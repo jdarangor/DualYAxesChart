@@ -786,9 +786,9 @@ module powerbi.extensibility.visual {
                 var dots = this.svgGroupMain.attr("id", "groupOfCircles").selectAll("dot")
                     .data(dp)
                     .enter().append("circle")
-                    .style("fill", 'transparent')
-                    .attr("r", 4)
-                    //.attr("r", viewModel.marker.MarkerSize)
+                    .style("fill", series[k].color)
+                    //.attr("r", 4)
+                    .attr("r", viewModel.marker.MarkerSize)
                     .attr("cx", function (d) { return xScale(d['xValue']); })
                     .attr("cy", function (d) { return yScale(d['yValue']); });
     
